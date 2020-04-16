@@ -1,6 +1,5 @@
-from JobsApi.src.jobs import Jobs
-from JobsApi.src.jobs import Tasks
-from JobsApi.src.database import DatabaseConnection
+from src.jobs import Jobs, Tasks
+from src.database import DatabaseConnection
 
 def test_create_a_task():
     task_property = {
@@ -192,3 +191,55 @@ def test_insert_database_with_same_name():
         assert False, "There is a same name in job, but don't has a error!"
     except:
         return True
+    
+def test_consult_job():
+    job_property = {
+        'name' : 'First Job Teste',
+        'active' : True,
+        'parentJob' : {
+            'name' : 'Second Job Teste',
+            'active' : False
+        },
+        'tasks' : [{
+                'name' : 'Task open Mp3 Test',
+                'weight' : 4,
+                'completed' : False,
+                'createdAt' : '2020-04-20'
+            }, {
+                'name' : 'Task open Manager Test',
+                'weight' : 2,
+                'completed' : True,
+                'createdAt' : '2020-04-15'
+            }
+        ]
+    }
+    jobInstanceOne = Jobs(**job_property)
+
+    job_property = {
+        'name' : 'Four Job Teste',
+        'active' : True,
+        'parentJob' : {
+            'name' : 'Three Job Teste',
+            'active' : False
+        },
+        'tasks' : [{
+                'name' : 'Task open Mp3 Test',
+                'weight' : 4,
+                'completed' : False,
+                'createdAt' : '2020-04-20'
+            }, {
+                'name' : 'Task open Manager Test',
+                'weight' : 2,
+                'completed' : True,
+                'createdAt' : '2020-04-15'
+            }
+        ]
+    }
+    jobInstanceTwo = Jobs(**job_property)
+
+    database = DatabaseConnection()
+    database.insert(jobInstanceOne)
+    database.insert(jobInstanceTwo)
+    valoresJobConsultado = database.consult(jobInstanceOne.getAttributes()["name"])
+    assert valoresJobConsultado == jobInstanceOne.getAttributes(), "Valor consultado não está sendo retornando como valor original"
+
