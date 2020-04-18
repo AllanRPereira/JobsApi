@@ -1,6 +1,6 @@
 import sqlalchemy as alchemy
 import datetime
-from src.tablemodels import tableBaseClass
+from docs.tablemodels.tablemodels import tableBaseClass
 
 class DatabaseConnection:
     

@@ -1,5 +1,6 @@
-from src.jobs import Jobs, Tasks
-from src.database import DatabaseConnection
+from ..jobs.jobs import Jobs, Tasks
+from ..database.database import DatabaseConnection
+
 
 def test_create_a_task():
     task_property = {
@@ -242,4 +243,3 @@ def test_consult_job():
     database.insert(jobInstanceTwo)
     valoresJobConsultado = database.consult(jobInstanceOne.getAttributes()["name"])
     assert valoresJobConsultado == jobInstanceOne.getAttributes(), "Valor consultado não está sendo retornando como valor original"
-
