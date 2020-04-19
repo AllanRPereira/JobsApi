@@ -20,6 +20,13 @@ class Jobs:
         }
         return attributes
     
+    def getParentParse(self):
+        
+        return "&".join([
+            self.parentJob["name"],
+            str(int(self.parentJob["active"]))
+        ])
+    
 class Tasks:
     def __init__(self, name, weight, completed, createdAt, *args, **kwargs):
         self.name = name
