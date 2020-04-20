@@ -1,7 +1,7 @@
 import sqlalchemy as alchemy
 import datetime
-from docs.tablemodels.tablemodels import tableBaseClass
-from docs.jobs.jobs import Jobs
+from docs.backend.tablemodels.tablemodels import tableBaseClass
+from docs.backend.jobs.jobs import Jobs
 
 class DatabaseConnection:
     
@@ -13,7 +13,7 @@ class DatabaseConnection:
 
     def insert(self, jobInstance):
         if not self.checkCrossDependence(jobInstance):
-            raise Exception("There is cross dependence in this jobs!")
+            return (False, "There is cross dependence in this jobs!")
 
         attributesJob = jobInstance.getAttributes()
         attributesJobWithoutTasks = attributesJob.copy()
@@ -29,7 +29,7 @@ class DatabaseConnection:
             insertTasksQuery = self.taskTable.insert().values(**attributesTask)
             self.connection.execute(insertTasksQuery)
         
-        return True
+        return (True, "")
 
     def checkCrossDependence(self, jobInstance):
         attributesJob = jobInstance.getAttributes()
@@ -46,13 +46,13 @@ class DatabaseConnection:
 
     def edition(self, jobInstance, jobName=False, jobInstancePrimary=False):
         if not self.checkCrossDependence(jobInstance):
-            return False
+            return (False, "There is cross dependence in this jobs!")
         elif jobName:
             nameWhere = jobName
         elif jobInstancePrimary:
             nameWhere = jobInstancePrimary.getAttributes()["name"]
         else:
-            return False
+            return (False, "JobName is not passed")
 
         attributesJobToUpdate = jobInstance.getAttributes()
         attributesJobWithoutTasks = attributesJobToUpdate.copy()
@@ -63,7 +63,7 @@ class DatabaseConnection:
         try:
             self.connection.execute(updateJobQuery)
         except alchemy.exc.IntegrityError:
-            return False
+            return (False, "There is a job with this name")
         queryIdExecute = alchemy.select([self.jobTable.c.idJob]).where(self.jobTable.c.name == attributesJobWithoutTasks['name'])
         idThisJob = self.connection.execute(queryIdExecute).fetchone()[0]
         tasksNameQuery = alchemy.select([self.taskTable.c.name]).where(self.taskTable.c.idJobForeignKey == idThisJob)
@@ -75,7 +75,8 @@ class DatabaseConnection:
             whereCondition = alchemy.and_(self.taskTable.c.idJobForeignKey == idThisJob, self.taskTable.c.name == namesTaskDb[0])
             updateTasksQuery = self.taskTable.update().where(whereCondition).values(**attributesTask)
             self.connection.execute(updateTasksQuery)
-        return True
+
+        return (True, "")
 
     def exclusion(self, jobName):
         idJobQuery = alchemy.select([self.jobTable.c.idJob]).where(self.jobTable.c.name == jobName)
@@ -88,14 +89,14 @@ class DatabaseConnection:
         deleteTaskQuery = self.taskTable.delete().where(whereCondition)
         numberOfTasksDeleted = self.connection.execute(deleteTaskQuery).rowcount
 
-        return numberOfTasksDeleted
+        return (True, numberOfTasksDeleted)
 
     def consult(self, jobName):
         whereCondition = self.jobTable.c.name == jobName
         selectJobQuery = self.jobTable.select().where(whereCondition)
         selectJobValues = self.connection.execute(selectJobQuery).fetchone()
         if not selectJobValues:
-            return False
+            return (False, "This job doesn't exists")
         else:
             idJob, name, active, parentJob = selectJobValues
         parentJob = parentJob.split("&")
@@ -127,5 +128,5 @@ class DatabaseConnection:
             })
         JobDictionary["tasks"] = newTaskValues.copy()
 
-        return JobDictionary.copy()
+        return (True, JobDictionary.copy())
 
