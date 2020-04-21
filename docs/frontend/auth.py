@@ -1,12 +1,15 @@
 import jwt
 import functools
-from flask import session, request, Response
+from flask import session, request, Response, render_template
 from docs.frontend import secret_key
 
 def authenticationSession(view):
     @functools.wraps(view)
     def decoratorView(*args, **kwargs):
-        pass
+        if "USER" not in session.keys():
+            return render_template("login.html", alert=False, contentAlert=None)
+        else:
+            return render_template("operation.html")
     return decoratorView
 
 def accessLevelToken(function):

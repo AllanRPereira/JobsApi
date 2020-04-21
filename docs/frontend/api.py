@@ -3,25 +3,12 @@ from docs.frontend import secret_key
 from docs.frontend.auth import accessLevelToken
 from docs.frontend import databaseConn
 from docs.frontend import createJob
+from docs.frontend import roles
 import json
 import jwt
 import time
 
 api = Blueprint("api", __name__, url_prefix="/api")
-roles = {
-    "ADMIN" : [{
-            "adm" : "adm"
-    }, {
-        "privilege" : ("insert", "delete", "consult", "edit")        
-    }]
-    ,
-    "PUBLIC" : [{
-            "teste" : "teste"
-    },{
-        "privilege" : ("consult",)        
-    }]
-    
-}
 
 @api.route("/")
 def apiIndex():
@@ -29,7 +16,6 @@ def apiIndex():
 
 @api.route("/getoken", methods=['GET', 'POST'])
 def getToken():
-    global roles
     jsonValues = request.get_json()
     username = jsonValues['username']
     password = jsonValues['password']
@@ -39,9 +25,9 @@ def getToken():
             if roles[typeUser][0][username] == password:
                 return returnToken(roles[typeUser][1])
             else:
-                return "User or password incorrect"
-    else:
-        return "This user doesn't exists"
+                break
+    
+    return Response("{\"status\" : \"User or password are incorrect\"}", status=200, mimetype="application/json")
 
 
 @api.route("/insert", methods=['GET', 'POST'])

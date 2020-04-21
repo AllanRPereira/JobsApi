@@ -1,0 +1,34 @@
+<div class="row justify-content-center mt-4">
+    <div class="col-md-auto">
+        <form action="/insert" method="POST">
+            <div class="form-group row align-items-center">
+                <label for="namejob" class="col-sm-5 col-form-label">Nome para o Job:</label>
+                <input type="text" class="form-control col-sm-7 text-body" name="namejob" id="namejob" placeholder="Obrigatório">
+            </div>
+            <div class="form-group row align-items-center">
+                <label class="col-form-label col-sm-5" for="jobstatus" id="jobstatus">O job está ativo ?</label>
+                <div class="custom-control custom-radio custom-control-inline" id="jobstatus">
+                    <input type="radio" id="yesActiveJob" name="jobActiveOption" value="yes" class="custom-control-input">
+                    <label class="custom-control-label" for="yesActiveJob">Sim</label>
+                </div>
+
+                <div class="custom-control custom-radio custom-control-inline" id="jobstatus">
+                    <input type="radio" id="notActiveJob" name="jobActiveOption" value="not" class="custom-control-input" checked>
+                    <label class="custom-control-label" for="notActiveJob">Não</label>
+                </div>
+            </div>
+            <div class="form-group row align-items-center">
+                <label for="parentJob" class="col-sm-5 col-form-label">Nome do Job a que depende:</label>
+                <input type="text" class="form-control col-sm-7 text-body" name="parentJob" id="parentJob" placeholder="Deixe vazio para nenhum">
+            </div>
+            <div class="form-group row align-items-center">
+                <label for="tasks" class="col-sm-5 col-form-label">Há alguma tarefa ?</label>
+                <input type="radio" class="form-control col-sm-7 text-body" name="tasks" id="tasks">
+                <input type="radio" class="form-control col-sm-7 text-body" name="tasks" id="tasks">
+            </div>
+            <div class="form-group row align-items-center">
+                <button type="submit" class="btn btn-primary btn-block">Inserir Job</button>
+            </div>
+        </form>
+    </div>
+</div>

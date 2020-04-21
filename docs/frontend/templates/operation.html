@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<head lang="pt-br">
+    <title>Jobs Registrer</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="AllanRPereira">
+    <meta name="description" content="Desenvolvimento de api simples para estudos">
+    <meta name="keywords" content="estudo, api, banco de dados">
+    <link href="{{url_for("static", filename="bootstrap.min.css")}}" rel="stylesheet">
+</head>
+<body>
+    <div class="container-md">
+        <div class="row justify-content-center mt-4">
+            <div class="col-md-8">
+                <h3>
+                    Job Registrer - Sistema de registro de trabalhos e tarefas
+                </h3>
+            </div>
+        </div>
+        <div class="row justify-content-center mt-3">
+            <div class="col-md-8">
+                <ul class="nav nav-tabs justify-content-center" id="tabOperations" role="tablist">
+                    <li class="nav-item">
+                    <a class="nav-link active" id="consult-tab" data-toggle="tab" href="#consult" role="tab" aria-controls="consult"
+                        aria-selected="true">Consultar Jobs</a>
+                    </li>
+                    <li class="nav-item">
+                    <a class="nav-link" id="insert-tab" data-toggle="tab" href="#insert" role="tab" aria-controls="insert"
+                        aria-selected="false">Inserir Jobs</a>
+                    </li>
+                    <li class="nav-item">
+                    <a class="nav-link" id="delete-tab" data-toggle="tab" href="#delete" role="tab" aria-controls="delete"
+                        aria-selected="false">Editar Jobs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-danger" id="edit-tab" data-toggle="tab" href="#edit" role="tab" aria-controls="edit"
+                        aria-selected="false">Deletar Jobs</a>
+                    </li>
+                </ul>
+                <div class="tab-content" id="tabContentOperations">
+                    {% set check = namespace(first=true) %}
+                    {% for functionAllow in permissions %}
+                        {% if check.first %}
+                            <div class="tab-pane fade active show" id="{{functionAllow}}" role="tabpanel" aria-labelledby="{{functionAllow}}-tab">{% include 'operations/' ~ functionAllow ~ '.html' %}</div>
+                            {% set check.first = false%}
+                        {% else %}
+                            <div class="tab-pane fade" id="{{functionAllow}}" role="tabpanel" aria-labelledby="{{functionAllow}}-tab">{% include 'operations/' ~ functionAllow ~ '.html' %}</div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+</body>

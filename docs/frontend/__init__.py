@@ -9,3 +9,19 @@ databaseConn = DatabaseConnection()
 
 "Alias to use backend Jobs class"
 createJob = Jobs
+
+"User of the system"
+roles = {
+    "ADMIN" : [{
+            "adm" : "adm"
+    }, {
+        "privilege" : ("insert", "delete", "consult", "edit")        
+    }]
+    ,
+    "PUBLIC" : [{
+            "teste" : "teste"
+    },{
+        "privilege" : ("consult",)        
+    }]
+    
+}
