@@ -7,6 +7,9 @@
     <meta name="description" content="Desenvolvimento de api simples para estudos">
     <meta name="keywords" content="estudo, api, banco de dados">
     <link href="{{url_for("static", filename="bootstrap.min.css")}}" rel="stylesheet">
+    <script type="text/javascript">
+        const yourToken = "{{ tokenAccess }}";
+    </script>
 </head>
 <body>
     <div class="container-md">
@@ -20,22 +23,32 @@
         <div class="row justify-content-center mt-3">
             <div class="col-md-8">
                 <ul class="nav nav-tabs justify-content-center" id="tabOperations" role="tablist">
-                    <li class="nav-item">
-                    <a class="nav-link active" id="consult-tab" data-toggle="tab" href="#consult" role="tab" aria-controls="consult"
-                        aria-selected="true">Consultar Jobs</a>
-                    </li>
-                    <li class="nav-item">
-                    <a class="nav-link" id="insert-tab" data-toggle="tab" href="#insert" role="tab" aria-controls="insert"
-                        aria-selected="false">Inserir Jobs</a>
-                    </li>
-                    <li class="nav-item">
-                    <a class="nav-link" id="delete-tab" data-toggle="tab" href="#delete" role="tab" aria-controls="delete"
-                        aria-selected="false">Editar Jobs</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-danger" id="edit-tab" data-toggle="tab" href="#edit" role="tab" aria-controls="edit"
-                        aria-selected="false">Deletar Jobs</a>
-                    </li>
+                    {% set checkTabs = namespace(first=true) %}
+                    {% set aliasName = {
+                        "insert" : "Inserir",
+                        "delete" : "Deletar",
+                        "consult" : "Consultar",
+                        "edit" : "Editar"
+                    } %}
+                    {% for functionAllow in permissions %}
+                        {% if checkTabs.first %}
+                            <li class="nav-item">
+                                <a class="nav-link active" id="{{functionAllow}}-tab" data-toggle="tab" href="#{{functionAllow}}" role="tab" aria-controls="{{functionAllow}}"
+                                    aria-selected="true">{{aliasName[functionAllow]}} Jobs</a>
+                            </li>
+                            {% set checkTabs.first = false%}
+                        {% elif functionAllow == "delete" %}
+                            <li class="nav-item">
+                                <a class="nav-link text-danger" id="{{functionAllow}}-tab" data-toggle="tab" href="#{{functionAllow}}" role="tab" aria-controls="{{functionAllow}}"
+                                    aria-selected="true">{{aliasName[functionAllow]}} Jobs</a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" id="{{functionAllow}}-tab" data-toggle="tab" href="#{{functionAllow}}" role="tab" aria-controls="{{functionAllow}}"
+                                    aria-selected="true">{{aliasName[functionAllow]}} Jobs</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
                 </ul>
                 <div class="tab-content" id="tabContentOperations">
                     {% set check = namespace(first=true) %}
@@ -52,7 +65,30 @@
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+
+        function getData(formObject, operation) {
+            const dataForm = new FormData(formObject);
+            var object = {};
+            dataForm.forEach((value, key) => {object[key] = value});
+            object["token"] = yourToken;
+            var jsonDataForm = JSON.stringify(object);
+            var initContentFetch = {
+                headers : {
+                    "Content-Type" : "application/json"
+                },
+                method : "POST",
+                mode : "cors",
+                body : jsonDataForm
+            }
+            return fetch("/" + operation, initContentFetch).then((result) => {
+                return result.blob();
+            })
+        }
+
+    </script>
+
+    <script src="{{url_for("static", filename="jquery-3.4.1.slim.min.js")}}" ></script>
+    <script src="{{url_for("static", filename="popper.min.js")}}"></script>
+    <script src="{{url_for("static", filename="bootstrap.min.js")}}"></script>
 </body>

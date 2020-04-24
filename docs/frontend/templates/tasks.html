@@ -1,0 +1,40 @@
+<div class="form-group taskCard" style="width:100%" id="taskCard_1">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Tarefa 1</h5>
+            <div class="form-group row">
+                <label for="taskName_1" class="col-sm-4 col-form-label">Nome da Tarefa</label>
+                <input type="text" class="form-control col-sm-7 text-body" name="taskName_1" id="taskName_1" placeholder="Obrigatório">
+            </div>
+            <div class="form-group row">
+                <label for="weightTask_1" class="col-sm-4 col-form-label">Importância:</label>
+                <select class="form-control col-sm-7 text-body" id="weightTask_1" name="weightTask_1">
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                    <option>6</option>
+                    <option>7</option>
+                    <option>8</option>
+                    <option>9</option>
+                    <option>10</option>
+                </select>
+            </div>
+            <div class="form-group row">
+                <label class="col-form-label col-sm-4" for="completedTask_1" id="completedTask_1">Tarefa está completa ?</label>
+                <div class="custom-control custom-radio custom-control-inline align-middle" id="completedTask_1">
+                    <input type="radio" id="yesCompletedTask_1" name="completedTask_1" value="yes" class="custom-control-input">
+                    <label class="custom-control-label" for="yesCompletedTask_1">Sim</label>
+                </div>
+
+                <div class="custom-control custom-radio custom-control-inline" id="completedTask_1">
+                    <input type="radio" id="notCompletedTask_1" name="completedTask_1" value="not" class="custom-control-input" checked>
+                    <label class="custom-control-label" for="notCompletedTask_1">Não</label>
+                </div>
+            </div>
+            <button onclick="addTask(this); return false;" class="btn btn-success mr-2 addNewTask">Adicionar Tarefa</button>
+            <a onclick="deleteTask(this); return false;" class="card-link text-danger deleteTask" hidden>Excluir Tarefa</a>
+        </div>
+    </div>
+</div>

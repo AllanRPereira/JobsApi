@@ -15,13 +15,13 @@ roles = {
     "ADMIN" : [{
             "adm" : "adm"
     }, {
-        "privilege" : ("insert", "delete", "consult", "edit")        
+        "privilege" : ["consult", "insert", "edit", "delete"]        
     }]
     ,
     "PUBLIC" : [{
             "teste" : "teste"
     },{
-        "privilege" : ("consult",)        
+        "privilege" : ["consult",] 
     }]
     
 }

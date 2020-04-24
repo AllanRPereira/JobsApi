@@ -1,10 +1,9 @@
-from flask import Blueprint, request, Response
+from flask import Blueprint, request, Response, jsonify
 from docs.frontend import secret_key
 from docs.frontend.auth import accessLevelToken
 from docs.frontend import databaseConn
 from docs.frontend import createJob
 from docs.frontend import roles
-import json
 import jwt
 import time
 
@@ -37,13 +36,13 @@ def insertAPI():
     if receivedJob == None or "name" not in receivedJob.keys():
         return Response("{\"status\" : \"unsuccess\"}", status=412, mimetype="application/json")
     jobInstance = createJob(**receivedJob)
-    statusCode, response = databaseConn.insert(jobInstance)
+    statusCode, content = databaseConn.insert(jobInstance)
     if statusCode:
-        return Response("{\"status\" : \"sucess\"}", status=200, mimetype="application/json")
+        return (jsonify(**content), 200)
     else:
         jsonResponse = {
             "status" : "unsuccess",
-            "log" : response
+            "log" : content
         }
         return Response(jsonResponse, status=417, mimetype="application/json")
 
@@ -51,10 +50,10 @@ def insertAPI():
 @accessLevelToken("edit")
 def editAPI():
     receivedJob = request.get_json()
-    if receivedJob == None or "job_edit_name" not in receivedJob:
+    if receivedJob == None or "name" not in receivedJob:
         return Response("{\"status\" : \"unsuccess\"}", status=412, mimetype="application/json")
 
-    jobName = receivedJob["job_edit_name"]
+    jobName = receivedJob["job_name_edit"]
     receivedJob.pop("job_name_edit")
     jobInstance = createJob(**receivedJob)
     statusCode, response = databaseConn.edition(jobInstance, jobName=jobName)
@@ -65,15 +64,17 @@ def editAPI():
             "status" : "unsuccess",
             "log" : response
         }
-        return Response(json, status=417, mimetype="application/json")
+        return Response(jsonResponse, status=417, mimetype="application/json")
 
 @api.route("/delete", methods=['GET', 'POST'])
 @accessLevelToken("delete")
 def deleteAPI():
     receivedJob = request.get_json()
-    jobName = receivedJob["job_name"]
+    jobName = receivedJob["name"]
     
-    if databaseConn.exclusion(jobName=jobName):
+    statusOperation, content = databaseConn.exclusion(jobName=jobName)
+
+    if statusOperation:
         return Response("{\"status\" : \"success\"}", status=200, mimetype="application/json")
     else:
         return Response("{\"status\" : \"unsuccess\"}", status=400, mimetype="application/json")
@@ -82,12 +83,30 @@ def deleteAPI():
 @accessLevelToken("consult")
 def consultAPI():
     receivedJob = request.get_json()
-    if receivedJob == None or "job_name" not in receivedJob:
+    if receivedJob == None or "name" not in receivedJob:
         return Response("{\"status\" : \"unsuccess\"}", status=412, mimetype="application/json")
-    jobName = receivedJob["job_name"]
-    
-    if databaseConn.consult(jobName=jobName):
-        return Response("{\"status\" : \"success\"}", status=200, mimetype="application/json")
+    jobName = receivedJob["name"]
+    """
+    statusOperation, content = databaseConn.consult(jobName=jobName)
+    """
+    #Only to testes
+    statusOperation, content = True, {"name" : "Job Ligar Pc", "active" : True, "parentJob" : "Nenhum", "tasks" : [
+        {
+            "name" : "Tarefa 1",
+            "weight" : 10,
+            "completed" : False,
+            "createdAt" : "10-05-1998"
+        },
+        {
+            "name" : "Tarefa 2",
+            "weight" : 5,
+            "completed" : True,
+            "createdAt" : "08-05-1998"
+        }
+    ]}
+    if statusOperation:
+        content["status"] = "sucess"
+        return (jsonify(**content), 200)
     else:
         return Response("{\"status\" : \"unsuccess\"}", status=400, mimetype="application/json")
 

@@ -6,7 +6,7 @@ from docs.backend.jobs.jobs import Jobs
 class DatabaseConnection:
     
     def __init__(self):
-        self.engineDatabase = alchemy.create_engine("sqlite:///:memory:")
+        self.engineDatabase = alchemy.create_engine("sqlite:///:memory:", connect_args={"check_same_thread" : False})
         tableBaseClass.metadata.create_all(self.engineDatabase)
         self.jobTable, self.taskTable = tableBaseClass.metadata.tables['jobs_table'], tableBaseClass.metadata.tables['tasks_table']
         self.connection = self.engineDatabase.connect()

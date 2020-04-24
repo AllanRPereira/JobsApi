@@ -3,14 +3,17 @@ import functools
 from flask import session, request, Response, render_template
 from docs.frontend import secret_key
 
-def authenticationSession(view):
-    @functools.wraps(view)
-    def decoratorView(*args, **kwargs):
-        if "USER" not in session.keys():
-            return render_template("login.html", alert=False, contentAlert=None)
-        else:
-            return render_template("operation.html")
-    return decoratorView
+def checkPermissionToOperation(operation):
+    def authenticationSession(view):
+        @functools.wraps(view)
+        def decoratorView(*args, **kwargs):
+            if "USER" not in session.keys():
+                return render_template("login.html", alert=False, contentAlert=None)
+            else:
+                if operation in session["PERMISSIONS"]:
+                    return view(*args, **kwargs)
+        return decoratorView
+    return authenticationSession
 
 def accessLevelToken(function):
     def decoratorFunctionPrincipal(view):

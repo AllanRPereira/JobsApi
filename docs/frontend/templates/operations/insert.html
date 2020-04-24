@@ -1,6 +1,6 @@
 <div class="row justify-content-center mt-4">
-    <div class="col-md-auto">
-        <form action="/insert" method="POST">
+    <div class="col-md-9">
+        <form id="insertForm" method="POST" onsubmit="sendOperation(this, 'insertHome'); return false;">
             <div class="form-group row align-items-center">
                 <label for="namejob" class="col-sm-5 col-form-label">Nome para o Job:</label>
                 <input type="text" class="form-control col-sm-7 text-body" name="namejob" id="namejob" placeholder="Obrigatório">
@@ -22,13 +22,78 @@
                 <input type="text" class="form-control col-sm-7 text-body" name="parentJob" id="parentJob" placeholder="Deixe vazio para nenhum">
             </div>
             <div class="form-group row align-items-center">
-                <label for="tasks" class="col-sm-5 col-form-label">Há alguma tarefa ?</label>
-                <input type="radio" class="form-control col-sm-7 text-body" name="tasks" id="tasks">
-                <input type="radio" class="form-control col-sm-7 text-body" name="tasks" id="tasks">
+                <label for="tasksJob" id="tasksJob" class="col-sm-5 col-form-label">Há alguma tarefa ?</label>
+                <div class="custom-control custom-radio custom-control-inline" id="tasksJob">
+                    <input type="radio" id="yesHasTask" name="tasksJobOption" value="yes" class="custom-control-input" onchange="hiddenTasks(this); return false;">
+                    <label class="custom-control-label" for="yesHasTask">Sim</label>
+                </div>
+
+                <div class="custom-control custom-radio custom-control-inline" id="tasksJob">
+                    <input type="radio" id="notHasTask" name="tasksJobOption" value="not" class="custom-control-input" onchange="hiddenTasks(this); return false;" checked>
+                    <label class="custom-control-label" for="notHasTask">Não</label>
+                </div>
+            </div>
+           
+            <div class="form-group row align-items-center" id="allTasks" hidden>
+                {% include './tasks.html' %}
             </div>
             <div class="form-group row align-items-center">
                 <button type="submit" class="btn btn-primary btn-block">Inserir Job</button>
             </div>
         </form>
+        
+        <script type="text/javascript">
+            function hiddenTasks(checkBox) {
+                var allTasks = document.getElementById("allTasks");
+                if (checkBox.value == "yes") {
+                    allTasks.hidden = false;
+                } else {
+                    allTasks.hidden = true;
+                }
+                return false;
+            }
+            function addTask(buttonObject) {
+    
+                const taskCards = document.getElementsByClassName("taskCard")
+                var numberTasks = taskCards.length ;
+                var divParent = document.getElementById("allTasks"); // Add news row of task to this div
+                var newTask = document.createElement("div"); // new row to add task
+    
+                var lastestId = parseInt(taskCards[numberTasks - 1].id.split("_")[1], 10)
+
+                newTask.className = "form-group taskCard"
+                newTask.style = "width:100%"
+                newTask.id = "taskCard_" + (lastestId + 1)
+                var identf = "_" + (lastestId + 1);
+                var identfOrig = "_" + lastestId;
+                var InnerChange = document.getElementById("taskCard" + identfOrig).innerHTML;
+                document.getElementById("taskCard" + identfOrig).getElementsByClassName("deleteTask")[0].hidden = false;
+                var replaceRegex = new RegExp(identfOrig, "g")
+                newTask.innerHTML = InnerChange.replace(replaceRegex, identf);
+                newTask.getElementsByClassName("card-title")[0].innerText = "Tarefa " + (numberTasks + 1)
+                divParent.appendChild(newTask);
+                
+                var olderAddButton = document.getElementsByClassName("addNewTask");
+                olderAddButton[0].remove();
+                return false;
+            }
+            
+            function deleteTask(object) {
+                $(object).closest("div.taskCard").remove();
+                updateTitle();
+                return false
+            }
+
+            function updateTitle() {
+                const taskCards = document.getElementsByClassName("taskCard");
+                for(var task = 0; task < taskCards.length; task++) {
+                    taskCards[task].getElementsByClassName("card-title")[0].innerText = "Tarefa " + (task + 1);
+                }
+                return true
+            }
+
+
+        </script>
+
     </div>
 </div>

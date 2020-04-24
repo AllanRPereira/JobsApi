@@ -1,48 +1,50 @@
 <!DOCTYPE html>
-<head lang="pt-br">
-    <title>Jobs Registrer</title>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="author" content="AllanRPereira">
-    <meta name="description" content="Desenvolvimento de api simples para estudos">
-    <meta name="keywords" content="estudo, api, banco de dados">
-    <link href="{{url_for("static", filename="bootstrap.css")}}" rel="stylesheet">
-</head>
-<body>
-    <div class="container-md">
-        <div class="row">
-            <div class="col-md-auto">
-                <!--<div class="card border border-warning" style="background-color:rgba(255,255,255,1)">-->
-                <div class="card-body m-3">
-                    <form action="/login" method="POST">
-                        <div class="form-group row">
-                            <label for="username" class="col-sm-5 col-form-label">Usuário:</label>
-                            <input type="text" class="form-control col-sm-7 text-body" name="username" id="username">
+<html lang="pt-br" class="h-100">
+    <head>
+        <title>Jobs Registrer</title>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="author" content="AllanRPereira">
+        <meta name="description" content="Desenvolvimento de api simples para estudos">
+        <meta name="keywords" content="estudo, api, banco de dados">
+        <link href="{{url_for("static", filename="bootstrap.min.css")}}" rel="stylesheet">
+    </head>
+    <body class="h-100">
+        <div class="h-100 container-md">
+            <div class="row h-100 justify-content-center align-items-center">
+                <div class="col-md-4">
+                    <!--<div class="card border border-warning" style="background-color:rgba(255,255,255,1)">-->
+                    <div class="card-body m-3">
+                        <div class="row">
+                            <form method="POST" action="/login">
+                                <div class="form-group row">
+                                    <label for="username" class="col-sm-5 col-form-label">Usuário:</label>
+                                    <input type="text" class="form-control col-sm-7 text-body" name="username" id="username">
+                                </div>
+                                <div class="form-group row">
+                                    <label for="password" class="col-sm-5 col-form-label">Senha:</label>
+                                    <input type="password" class="form-control col-sm-7 text-body" name="password" id="password">
+                                </div>
+                                <div class="form-group row">
+                                    <button type="submit" class="btn btn-outline-primary btn-block z-depth-5">Fazer login</button>
+                                </div>
+                                <div class="form-group row">
+                                    {% if alert%}
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="width:100%">
+                                            {{ contentAlert }}
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                    {% else %}
+                                        <div></div>
+                                    {% endif %}
+                                </div>
+                            <form>
                         </div>
-                        <div class="form-group row">
-                            <label for="password" class="col-sm-5 col-form-label">Senha:</label>
-                            <input type="password" class="form-control col-sm-7 text-body" name="password" id="password">
-                        </div>
-                        <div class="form-group row">
-                            <button type="submit" class="btn btn-outline-primary btn-block z-depth-5">Fazer login</button>
-                        </div>
-                    <form>
-                        {% if alert%}
-                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                {{ contentAlert }}
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                        {% else %}
-                            <div></div>
-                        {% endif %}
-            </div> 
+                </div> 
+            </div>
         </div>
-    </div>
-
-
-
-
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-</body>
+        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    </body>
+</html>
