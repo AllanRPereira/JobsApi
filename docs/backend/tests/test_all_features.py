@@ -165,12 +165,7 @@ def test_insert_database_with_cross_dependecy():
     jobInstanceTwo = Jobs(**exampleJobWithCrossDependence)
     database = DatabaseConnection()
     database.insert(jobInstanceOne)
-    try:
-        database.insert(jobInstanceTwo)
-    except Exception:
-        return True
-
-    assert False, "Check Cross Dependence is not working in real case"
+    assert database.insert(jobInstanceTwo)[1] == "There is cross dependence in this jobs!", "Check Cross Dependence is not working in real case"
 
 def test_insert_database_with_same_name():
     global exampleJobCorrectOne
@@ -180,11 +175,8 @@ def test_insert_database_with_same_name():
     jobInstanceTwo = Jobs(**exampleJobCorrectTwo)
     database = DatabaseConnection()
     database.insert(jobInstanceOne)
-    try:
-        database.insert(jobInstanceTwo)
-    except Exception:
-        return True
-    assert False, "There is a same name in job, but don't has a error!"
+
+    assert database.insert(jobInstanceTwo)[1] == "This job already exists", "There is a same name in job, but don't has a error!"
 
 def test_consult_job():
     global exampleJobCorrectOne
@@ -196,7 +188,7 @@ def test_consult_job():
     database = DatabaseConnection()
     database.insert(jobInstanceOne)
     database.insert(jobInstanceTwo)
-    valoresJobConsultado = database.consult(jobInstanceOne.getAttributes()["name"])
+    valoresJobConsultado = database.consult(jobInstanceOne.getAttributes()["name"])[1]
     assert valoresJobConsultado == jobInstanceOne.getAttributes(), "Valor consultado não está sendo retornando como valor original"
 
 def test_consult_job_without_exist():
@@ -206,7 +198,7 @@ def test_consult_job_without_exist():
     database = DatabaseConnection()
     database.insert(jobInstanceOne)
 
-    assert database.consult(jobName="Job don't exist") == False, "Não está retornando adequadamente quando não há o Job"
+    assert database.consult(jobName="Job don't exist")[0] == False, "Não está retornando adequadamente quando não há o Job"
 
 def test_edition_job_correct():
 
@@ -222,8 +214,8 @@ def test_edition_job_correct():
     database = DatabaseConnection()
     database.insert(jobInstanceOne)
     database.insert(jobInstanceThree)
-    assert database.edition(jobInstanceTwo, jobName="First Job Teste"), "Update não foi realizado" 
-    assert database.consult(jobInstanceTwo.getAttributes()['name']) == jobInstanceTwo.getAttributes(), "Não está inserindo corretamente"
+    assert database.edition(jobInstanceTwo, jobName="First Job Teste")[0], "Update não foi realizado" 
+    assert database.consult(jobInstanceTwo.getAttributes()['name'])[1] == jobInstanceTwo.getAttributes(), "Não está inserindo corretamente"
 
 def test_edition_job_incorrect():
     """
@@ -244,7 +236,7 @@ def test_edition_job_incorrect():
     nameJobThree = jobInstanceThree.getAttributes()['name']
     nameJobOne = jobInstanceOne.getAttributes()['name']
     'jobInstanceTwo tem o mesmo nome do jobInstanceOne'
-    assert not database.edition(jobInstanceTwo, jobName=nameJobThree), "Há conflito de nomes"
+    assert not database.edition(jobInstanceTwo, jobName=nameJobThree)[0], "Há conflito de nomes"
 
 def test_edition_job_with_cross_dependence():
 
@@ -260,7 +252,19 @@ def test_edition_job_with_cross_dependence():
     database = DatabaseConnection()
     database.insert(jobInstanceOne)
     database.insert(jobInstanceThree)
-    assert not database.edition(jobInstanceCross, jobName=jobInstanceThree.getAttributes()['name']), "Está havendo dependência cruzada na edição"
+    assert not database.edition(jobInstanceCross, jobName=jobInstanceThree.getAttributes()['name'])[0], "Está havendo dependência cruzada na edição"
+
+def test_edition_job_without_exists():
+    global exampleJobCorrectOne
+    jobInstanceOne = Jobs(**exampleJobCorrectOne)
+
+    global exampleJobCorrecThree
+    jobInstanceThree = Jobs(**exampleJobCorrecThree)
+
+    database = DatabaseConnection()
+    database.insert(jobInstanceOne)
+    database.insert(jobInstanceThree)
+    assert database.edition(jobInstanceOne, jobName="This name doesn't exists")[1] == "None row was changed", "Está tentando atualizar um trabalho que não existe" 
 
 def test_exclusion_job():
     global exampleJobCorrectOne
@@ -273,6 +277,6 @@ def test_exclusion_job():
     database.insert(jobInstanceOne)
     database.insert(jobInstanceThree)
 
-    assert database.consult(jobName=exampleJobCorrectOne['name']) != False, "Não consultou adequadamente"
-    assert database.exclusion(jobName=exampleJobCorrectOne['name']), "Não deletou corretamente"
-    assert database.consult(jobName=exampleJobCorrectOne['name']) == False, "Valor ainda existe no banco de dados"
+    assert database.consult(jobName=exampleJobCorrectOne['name'])[0] != False, "Não consultou adequadamente"
+    assert database.exclusion(jobName=exampleJobCorrectOne['name'])[0], "Não deletou corretamente"
+    assert database.consult(jobName=exampleJobCorrectOne['name'])[0] == False, "Valor ainda existe no banco de dados"
