@@ -1,13 +1,117 @@
 <div class="row justify-content-center mt-4">
-    <div class="col-md-9">
-        <form id="editForm" method="POST" onsubmit="sendOperation(this, 'editHome'); return false;">
-            <div class="form-group row">
-                <label for="namejob" class="col-sm-5 col-form-label">Nome do Job para Edição:</label>
-                <input type="text" class="form-control col-sm-7 text-body" name="namejob" id="namejob">
+    <div class="col-9">
+        <div class="row">
+            <div class="col">
+                <form id="editForm" method="POST" onsubmit="sendEditConsult(this); return false;">
+                    <div class="form-group row">
+                        <label for="namejob" class="col-5 col-form-label">Nome do Job para Edição:</label>
+                        <input type="text" class="form-control col-7 text-body" name="namejob" id="namejob">
+                    </div>
+                    <div class="form-group row">
+                        <button type="submit" class="btn btn-primary btn-block">Buscar Job para Editar</button>
+                    </div>
+                </form>
             </div>
-            <div class="form-group row">
-                <button type="submit" class="btn btn-primary btn-block">Editar Job</button>
+        </div>
+        <div class="row"> <!-- Será mostrado se o job que será editado existir -->
+            <div class="col">
+                <form method="POST" onsubmit="sendToEdit(this); return false;">
+                    <div class="form-group row">
+                        <div class="form-inline">
+                            <div class="form-inline col-5">
+                                <label for="nameResultEdit" class="col-12 text-center">Nome do Job:</label> <!-- Funciona mas tá estranho-->
+                                <span id="nameResultEdit" class="col-12 text-center">Ligação Suprema</span>
+                            </div>
+                            <div class="form-inline col-7 pl-0">
+                                <label for="nameJobEdit" class="pl-0 col-4 col-form-label">Novo nome:</label>
+                                <input type="text" class="form-control col-8 text-body" name="nameJobEdit" id="nameJobEdit" placeholder="Obrigatório">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="form-inline">
+                            <div class="form-inline col-5">
+                                <label for="activeJobStatusEdit" class="">Estado atual:</label>
+                                <span id="activeJobStatusEdit" class="ml-2">Ativado</span>
+                            </div>
+                            <div class="form-inline col-7 pl-0">
+                                <label class="col-form-label col-5" for="jobstatusEdit" id="jobstatus">Novo estado:</label>
+                                <div class="custom-control custom-radio custom-control-inline" id="jobstatusEdit">
+                                    <input type="radio" id="yesActiveJobEdit" name="jobActiveOptionEdit" value="yes" class="custom-control-input">
+                                    <label class="custom-control-label" for="yesActiveJobEdit">Ativado</label>
+                                </div>
+
+                                <div class="custom-control custom-radio custom-control-inline" id="jobstatusEdit">
+                                    <input type="radio" id="notActiveJobEdit" name="jobActiveOptionEdit" value="not" class="custom-control-input" checked>
+                                    <label class="custom-control-label" for="notActiveJobEdit">Desativado</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="parentJobEdit" class="col-5 col-form-label">Novo Job dependente:</label>
+                        <input type="text" class="form-control col-7 text-body" name="parentJobEdit" id="parentJobEdit" placeholder="Deixe vazio para nenhum">
+                    </div>
+                    <div class="form-group row">
+                        <label for="tasksJobEdit" id="tasksJob" class="col-5 col-form-label">A dependência está ?</label>
+                        <div class="custom-control custom-radio custom-control-inline" id="tasksJobEdit">
+                            <input type="radio" id="activeParentJobEdit" name="activeParentEdit" value="yes" class="custom-control-input">
+                            <label class="custom-control-label" for="activeParentEdit">Ativada</label>
+                        </div>
+
+                        <div class="custom-control custom-radio custom-control-inline" id="tasksJobEdit">
+                            <input type="radio" id="notactiveParentJobEdit" name="notactiveParentJobEdit" value="not" class="custom-control-input" checked>
+                            <label class="custom-control-label" for="notactiveParentJobEdit">Desativada</label>
+                        </div>
+                    </div>
+
+
+
+
+                    <div class="form-group row">
+                        <label for="tasksJob" id="tasksJob" class="col-5 col-form-label">Há alguma tarefa ?</label>
+                        <div class="custom-control custom-radio custom-control-inline" id="tasksJob">
+                            <input type="radio" id="yesHasTask" name="tasksJobOption" value="yes" class="custom-control-input" onchange="hiddenTasks(this); return false;">
+                            <label class="custom-control-label" for="yesHasTask">Sim</label>
+                        </div>
+
+                        <div class="custom-control custom-radio custom-control-inline" id="tasksJob">
+                            <input type="radio" id="notHasTask" name="tasksJobOption" value="not" class="custom-control-input" onchange="hiddenTasks(this); return false;" checked>
+                            <label class="custom-control-label" for="notHasTask">Não</label>
+                        </div>
+                    </div>
+                
+                    <div class="form-group row" id="allTasks" hidden>
+                        {% include './tasks.html' %}
+                    </div>
+                    <div class="form-group row">
+                        <button type="submit" class="btn btn-primary btn-block">Inserir Job</button>
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
+        <div class="row">
+            <div class="alert" id="checkJobEdit" role="alert" hidden>
+            </div>
+        </div>
     </div>
+    <script type="text/javascript">
+        function sendEditConsult(formObject) {
+                resetAlert("checkJobEdit")
+                getData(formObject, "editHome").then((blob) => {
+                    var reader = new FileReader();
+                    reader.addEventListener("load", function() {
+                        var jsonObject = JSON.parse(reader.result)
+                        if (jsonObject["status"] == "unsuccess") {
+                            return showAlert("alert alert-danger", "responseInsert", jsonObject["log"])
+                        } else {
+                            return showAlert("alert alert-success", "responseInsert", "Inserção feita com sucesso!")
+                        }
+                    })
+                    reader.readAsText(blob)
+                })
+                document.getElementById("cleanButtonInput").hidden = false
+                return false
+            }
+    </script>
 </div>

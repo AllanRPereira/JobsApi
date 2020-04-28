@@ -1,13 +1,40 @@
 <div class="row justify-content-center mt-4">
-    <div class="col-md-9">
-        <form id="deleteForm" method="POST" onsubmit="sendOperation(this, 'deleteHome'); return false;">
-            <div class="form-group row">
-                <label for="namejob" class="col-sm-5 col-form-label">Nome do Job:</label>
-                <input type="text" class="form-control col-sm-7 text-body" name="namejob" id="namejob">
+    <div class="col-9">
+        <div class="row">
+            <div class="col">
+                <form id="deleteForm" method="POST" onsubmit="sendDelete(this); return false;">
+                    <div class="form-group row">
+                        <label for="name" class="col-5 col-form-label">Nome do Job:</label>
+                        <input type="text" class="form-control col-7 text-body" name="name" id="name">
+                    </div>
+                    <div class="form-group row">
+                        <button type="submit" class="btn btn-danger btn-block">Deletar Job</button>
+                    </div>
+                </form>
             </div>
-            <div class="form-group row">
-                <button type="submit" class="btn btn-danger btn-block">Deletar Job</button>
+        </div>
+        <div class="row">
+            <div class="col p-0">
+                <div class="alert" role="alert" id="responseDelete" hidden>
+                </div>
             </div>
-        </form>
+        </div>
     </div>
+    <script type="text/javascript">
+        function sendDelete(formObject) {
+            getData(formObject, "deleteHome").then((blob) => {
+                var reader = new FileReader();
+                reader.addEventListener("load", function() {
+                    var jsonObject = JSON.parse(reader.result)
+                    if (jsonObject["status"] == "unsuccess") {
+                        return showAlert("alert alert-danger", "responseDelete", jsonObject["log"])
+                    } else {
+                        return showAlert("alert alert-success", "responseDelete", "Deletado com sucesso")
+                    }
+                })
+                reader.readAsText(blob)
+            })
+        }
+
+    </script>
 </div>

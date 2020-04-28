@@ -73,6 +73,7 @@
             dataForm.forEach((value, key) => {object[key] = value});
             object["token"] = yourToken;
             var jsonDataForm = JSON.stringify(object);
+            console.log(jsonDataForm)
             var initContentFetch = {
                 headers : {
                     "Content-Type" : "application/json"
@@ -84,6 +85,18 @@
             return fetch("/" + operation, initContentFetch).then((result) => {
                 return result.blob();
             })
+        }
+        
+        function showAlert(typeAlert, idAlert, messageAlert) {
+            var alert = document.getElementById(idAlert)
+            alert.hidden = false;
+            alert.innerText = messageAlert;
+            alert.className = typeAlert;
+            return true
+        }
+
+        function resetAlert(idAlert) {
+            document.getElementById(idAlert).hidden = true
         }
 
     </script>

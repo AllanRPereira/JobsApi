@@ -1,46 +1,74 @@
 <div class="row justify-content-center mt-4">
-    <div class="col-md-9">
-        <form id="insertForm" method="POST" onsubmit="sendOperation(this, 'insertHome'); return false;">
-            <div class="form-group row align-items-center">
-                <label for="namejob" class="col-sm-5 col-form-label">Nome para o Job:</label>
-                <input type="text" class="form-control col-sm-7 text-body" name="namejob" id="namejob" placeholder="Obrigatório">
-            </div>
-            <div class="form-group row align-items-center">
-                <label class="col-form-label col-sm-5" for="jobstatus" id="jobstatus">O job está ativo ?</label>
-                <div class="custom-control custom-radio custom-control-inline" id="jobstatus">
-                    <input type="radio" id="yesActiveJob" name="jobActiveOption" value="yes" class="custom-control-input">
-                    <label class="custom-control-label" for="yesActiveJob">Sim</label>
-                </div>
+    <div class="col-9 mb-3">
+        <div class="row">
+            <div class="col">
+                <form method="POST" onsubmit="sendInsert(this); return false;">
+                    <div class="form-group row align-items-center">
+                        <label for="namejob" class="col-sm-5 col-form-label">Nome para o Job:</label>
+                        <input type="text" class="form-control col-sm-7 text-body" name="namejob" id="namejob" placeholder="Obrigatório">
+                    </div>
+                    <div class="form-group row align-items-center">
+                        <label class="col-form-label col-sm-5" for="jobstatus" id="jobstatus">O job está ativo ?</label>
+                        <div class="custom-control custom-radio custom-control-inline" id="jobstatus">
+                            <input type="radio" id="yesActiveJob" name="jobActiveOption" value="yes" class="custom-control-input">
+                            <label class="custom-control-label" for="yesActiveJob">Sim</label>
+                        </div>
 
-                <div class="custom-control custom-radio custom-control-inline" id="jobstatus">
-                    <input type="radio" id="notActiveJob" name="jobActiveOption" value="not" class="custom-control-input" checked>
-                    <label class="custom-control-label" for="notActiveJob">Não</label>
-                </div>
-            </div>
-            <div class="form-group row align-items-center">
-                <label for="parentJob" class="col-sm-5 col-form-label">Nome do Job a que depende:</label>
-                <input type="text" class="form-control col-sm-7 text-body" name="parentJob" id="parentJob" placeholder="Deixe vazio para nenhum">
-            </div>
-            <div class="form-group row align-items-center">
-                <label for="tasksJob" id="tasksJob" class="col-sm-5 col-form-label">Há alguma tarefa ?</label>
-                <div class="custom-control custom-radio custom-control-inline" id="tasksJob">
-                    <input type="radio" id="yesHasTask" name="tasksJobOption" value="yes" class="custom-control-input" onchange="hiddenTasks(this); return false;">
-                    <label class="custom-control-label" for="yesHasTask">Sim</label>
-                </div>
+                        <div class="custom-control custom-radio custom-control-inline" id="jobstatus">
+                            <input type="radio" id="notActiveJob" name="jobActiveOption" value="not" class="custom-control-input" checked>
+                            <label class="custom-control-label" for="notActiveJob">Não</label>
+                        </div>
+                    </div>
+                    <div class="form-group row align-items-center">
+                        <label for="parentJob" class="col-sm-5 col-form-label">Nome do Job a que depende:</label>
+                        <input type="text" class="form-control col-sm-7 text-body" name="parentJob" id="parentJob" placeholder="Deixe vazio para nenhum">
+                    </div>
+                    <div class="form-group row align-items-center">
+                        <label for="tasksJob" id="tasksJob" class="col-sm-5 col-form-label">A dependência está ativa ?</label>
+                        <div class="custom-control custom-radio custom-control-inline" id="tasksJob">
+                            <input type="radio" id="activeParentJob" name="activeParent" value="yes" class="custom-control-input">
+                            <label class="custom-control-label" for="activeParentJob">Sim</label>
+                        </div>
 
-                <div class="custom-control custom-radio custom-control-inline" id="tasksJob">
-                    <input type="radio" id="notHasTask" name="tasksJobOption" value="not" class="custom-control-input" onchange="hiddenTasks(this); return false;" checked>
-                    <label class="custom-control-label" for="notHasTask">Não</label>
+                        <div class="custom-control custom-radio custom-control-inline" id="tasksJob">
+                            <input type="radio" id="notactiveParentJob" name="activeParent" value="not" class="custom-control-input" checked>
+                            <label class="custom-control-label" for="notactiveParentJob">Não</label>
+                        </div>
+                    </div>
+                    <div class="form-group row align-items-center">
+                        <label for="tasksJob" id="tasksJob" class="col-sm-5 col-form-label">Há alguma tarefa ?</label>
+                        <div class="custom-control custom-radio custom-control-inline" id="tasksJob">
+                            <input type="radio" id="yesHasTask" name="tasksJobOption" value="yes" class="custom-control-input" onchange="hiddenTasks(this); return false;">
+                            <label class="custom-control-label" for="yesHasTask">Sim</label>
+                        </div>
+
+                        <div class="custom-control custom-radio custom-control-inline" id="tasksJob">
+                            <input type="radio" id="notHasTask" name="tasksJobOption" value="not" class="custom-control-input" onchange="hiddenTasks(this); return false;" checked>
+                            <label class="custom-control-label" for="notHasTask">Não</label>
+                        </div>
+                    </div>
+                
+                    <div class="form-group row align-items-center" id="allTasks" hidden>
+                        {% include './tasks.html' %}
+                    </div>
+                    <div class="form-group row align-items-center">
+                        <button type="submit" class="btn btn-primary btn-block">Inserir Job</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col p-0">
+                <div class="alert" id="responseInsert" role="alert" style="width:100%" hidden>
                 </div>
             </div>
-           
-            <div class="form-group row align-items-center" id="allTasks" hidden>
-                {% include './tasks.html' %}
+        </div>
+        <div class="row">
+            <div class="col p-0">
+                <button class="btn btn-info btn-block" onclick="cleanInputTasks(this)" id="cleanButtonInput" hidden>Limpar campos!</button>
             </div>
-            <div class="form-group row align-items-center">
-                <button type="submit" class="btn btn-primary btn-block">Inserir Job</button>
-            </div>
-        </form>
+        </div>
+
         
         <script type="text/javascript">
             function hiddenTasks(checkBox) {
@@ -59,7 +87,7 @@
                 var divParent = document.getElementById("allTasks"); // Add news row of task to this div
                 var newTask = document.createElement("div"); // new row to add task
     
-                var lastestId = parseInt(taskCards[numberTasks - 1].id.split("_")[1], 10)
+                var lastestId = parseInt(taskCards[numberTasks - 1].id.split("_")[1], 10) // taskCard_10
 
                 newTask.className = "form-group taskCard"
                 newTask.style = "width:100%"
@@ -92,6 +120,48 @@
                 return true
             }
 
+            function sendInsert(formObject) {
+                resetAlert("responseInsert")
+                getData(formObject, "insertHome").then((blob) => {
+                    var reader = new FileReader();
+                    reader.addEventListener("load", function() {
+                        var jsonObject = JSON.parse(reader.result)
+                        if (jsonObject["status"] == "unsuccess") {
+                            return showAlert("alert alert-danger", "responseInsert", jsonObject["log"])
+                        } else {
+                            return showAlert("alert alert-success", "responseInsert", "Inserção feita com sucesso!")
+                        }
+                    })
+                    reader.readAsText(blob)
+                })
+                document.getElementById("cleanButtonInput").hidden = false
+                return false
+            }
+
+            function cleanInputTasks(buttonClean) {
+                var taskTemplate = `
+                    {% include './tasks.html' %}
+                `
+                var allTasks = document.getElementById("allTasks")
+                allTasks.innerHTML = taskTemplate;
+                allTasks.hidden = true;
+                var allInputs = document.getElementsByTagName("input")
+                for(var index = 0;index < allInputs.length;index++) {
+                    var inputLocal = allInputs[index]
+                    console.log(inputLocal)
+                    if(inputLocal.type == "text") {
+                        inputLocal.value = ""
+                    } else if (inputLocal.type == "radio") {
+                        if(inputLocal.defaultChecked) {
+                            inputLocal.checked = true
+                        }
+                    }
+                }
+                resetAlert("responseInsert");
+                buttonClean.hidden = true;
+
+            }
+           
 
         </script>
 

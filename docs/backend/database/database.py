@@ -21,7 +21,11 @@ class DatabaseConnection:
         attributesJobWithoutTasks['parentJob'] = jobInstance.getParentParse()
 
         insertJobQuery = self.jobTable.insert().values(**attributesJobWithoutTasks)
-        idThisJob = self.connection.execute(insertJobQuery).inserted_primary_key[0]
+        try:
+            idThisJob = self.connection.execute(insertJobQuery).inserted_primary_key[0]
+        except alchemy.exc.IntegrityError:
+            return (False, "This job already exists")
+
         for attributesTask in attributesJob['tasks']:
             attributesTask['idJobForeignKey'] = idThisJob
             dateToDb = datetime.datetime(*[int(strDate) for strDate in attributesTask['createdAt'].split("-")])
@@ -61,7 +65,9 @@ class DatabaseConnection:
         whereCondition = self.jobTable.c.name == nameWhere
         updateJobQuery = self.jobTable.update().where(whereCondition).values(**attributesJobWithoutTasks)
         try:
-            self.connection.execute(updateJobQuery)
+            result = self.connection.execute(updateJobQuery)
+            if result.rowcount == 0:
+                return (False, "None row was changed")
         except alchemy.exc.IntegrityError:
             return (False, "There is a job with this name")
         queryIdExecute = alchemy.select([self.jobTable.c.idJob]).where(self.jobTable.c.name == attributesJobWithoutTasks['name'])
@@ -80,7 +86,11 @@ class DatabaseConnection:
 
     def exclusion(self, jobName):
         idJobQuery = alchemy.select([self.jobTable.c.idJob]).where(self.jobTable.c.name == jobName)
-        idThisJob = self.connection.execute(idJobQuery).fetchone()[0]
+        idThisJob = self.connection.execute(idJobQuery).fetchone()
+        if not idThisJob:
+            return (False, "This job doesn't exists")
+        else:
+            idThisJob = idThisJob[0]
         whereCondition = self.jobTable.c.name == jobName
         deleteJobQuery = self.jobTable.delete().where(whereCondition)
         self.connection.execute(deleteJobQuery)
