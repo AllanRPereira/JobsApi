@@ -137,6 +137,10 @@ def parseFormToJob(formRequestJson):
         "tasks" : taskInformation
 
     }
+
+    if "job_name_edit" in formRequestJson.keys():
+        jobValues["job_name_edit"] = formRequestJson["job_name_edit"]
+
     return jobValues
 
 def checkFromHome():

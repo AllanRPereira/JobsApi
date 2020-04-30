@@ -1,4 +1,4 @@
-<div class="row justify-content-center mt-4">
+<div class="row justify-content-center mt-4 max-div-row" id="consultPage">
     <div class="col-9">
         <div class="row">
             <div class="col">
@@ -64,11 +64,16 @@
 
     function sendConsult(formObject) {
             resetAlert("statusConsult")
+            document.getElementById("resultConsult").hidden = true
             getData(formObject, "consultHome").then((blob) => {
                 var reader = new FileReader();
                 reader.addEventListener("load", function() {
-                    console.log(reader.result)
-                    insertObjectsInScreen(JSON.parse(reader.result))
+                    jsonObject = JSON.parse(reader.result)
+                    if(jsonObject["status"] == "unsuccess") {
+                        showAlert("alert alert-danger", "statusConsult", "Infelizmente não foi possível encontrar esse Job")
+                    } else if (jsonObject["status"] == "success") {
+                        insertObjectsDataInScreen(JSON.parse(reader.result), "") // None sufix to add
+                    }
                 })
                 reader.readAsText(blob)
                 return reader
@@ -76,58 +81,5 @@
             return false
         }
     
-    function insertObjectsInScreen(jsonObject) {
-        if (jsonObject["status"] == "unsuccess") {
-            return showAlert("alert alert-danger", "statusConsult", "Infelizmente não foi possível encontrar esse Job")
-        }
-        var propertysToFind = {
-            "jobPropertys" : ["", "name", "active"],
-            "parentJobPropertys" : ["parentJob", "name", "active"]
-        }
-        var keysProper = Object.keys(propertysToFind)
-        console.log(jsonObject)
-        for(var index=0;index < keysProper.length;index++) {
-            var arrayProper = propertysToFind[keysProper[index]] // index = 0, arrayProper = ["", "name", "active"]
-            var nameToFind = arrayProper[0];
-            for(var indexProper=1;indexProper < arrayProper.length;indexProper++) { // Suportando apenas dois níveis no Json
-                if(nameToFind == "") {
-                    var valueToPut = jsonObject[arrayProper[indexProper]]
-                } else {
-                    var valueToPut = jsonObject[nameToFind][arrayProper[indexProper]]
-                }
-                if(valueToPut == true) {
-                    valueToPut = "Ativada"
-                } else if (valueToPut == false) {
-                    valueToPut = "Desativada"
-                }
-                document.getElementById(nameToFind + arrayProper[indexProper] + "Result").innerText = valueToPut
-            }
-        }
-        
-        document.getElementById("resultConsult").hidden = false
-        if (Object.keys(jsonObject).includes("tasks") == false) {
-            return false;
-        }
-        document.getElementById("tasksBody").innerHTML = ""
-        for(var index=0;index < jsonObject["tasks"].length;index++) {
-            var taskData = jsonObject["tasks"][index]
-            if(taskData["completed"] == true) {
-                taskData["completed"] = "Sim"
-            } else {
-                taskData["completed"] = "Não"
-            }
-            document.getElementById("tasksBody").innerHTML += `
-                <tr>
-                    <th scope="row">` + (index + 1) + `</th>
-                    <td>`+ taskData["name"] +`</td>
-                    <td>`+ taskData["weight"] +`</td>
-                    <td>`+ taskData["completed"] +`</td>
-                    <td>`+ taskData["createdAt"] +`</td>
-                </tr>
-            `
-        }
-        document.getElementById("tasksTable").hidden = false
-        return true
-    }
 
 </script>

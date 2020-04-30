@@ -67,11 +67,41 @@
 
     <script type="text/javascript">
 
-        function getData(formObject, operation) {
+
+
+        const insertPage = document.getElementById("insertPage");
+        const consultPage = document.getElementById("consultPage");
+        const editPage = document.getElementById("editPage");
+        const deletePage = document.getElementById("deletePage");
+        const allPages = {
+            "insertPage" : insertPage,
+            "consultPage" : consultPage,
+            "deletePage" : deletePage,
+            "editPage" : editPage,
+        };
+        window.addEventListener("load", function() {changeFirstTaskToPageIdentify();})
+
+        function changeFirstTaskToPageIdentify() {
+            allTasksNavs = document.getElementsByClassName("allTasks")
+            for(var index=0;index < allTasksNavs.length;index++) {
+                key = allTasksNavs[index].closest(".max-div-row").id
+                var replaceRegex = new RegExp("_1", "g")
+                allTasksNavs[index].innerHTML = allTasksNavs[index].innerHTML.replace(replaceRegex, "_1_" + key);
+            }
+        }
+
+        function getData(formObject, operation, extraData) {
             const dataForm = new FormData(formObject);
             var object = {};
             dataForm.forEach((value, key) => {object[key] = value});
             object["token"] = yourToken;
+            if(extraData !== undefined) {
+                allKeys = Object.keys(extraData)
+                for(var index = 0;index < allKeys.length;index++) {
+                    var key = allKeys[index]
+                    object[key] = extraData[key]
+                }
+            }
             var jsonDataForm = JSON.stringify(object);
             console.log(jsonDataForm)
             var initContentFetch = {
@@ -92,11 +122,138 @@
             alert.hidden = false;
             alert.innerText = messageAlert;
             alert.className = typeAlert;
-            return true
+            return true;
         }
 
         function resetAlert(idAlert) {
             document.getElementById(idAlert).hidden = true
+        }
+
+        function insertObjectsDataInScreen(jsonObject, sufixToFind) {
+            var propertysToFind = {
+                "jobPropertys" : ["", "name", "active"],
+                "parentJobPropertys" : ["parentJob", "name", "active"]
+            }
+            var keysProper = Object.keys(propertysToFind)
+            for(var index=0;index < keysProper.length;index++) {
+                var arrayProper = propertysToFind[keysProper[index]] // index = 0, arrayProper = ["", "name", "active"]
+                var nameToFind = arrayProper[0];
+                for(var indexProper=1;indexProper < arrayProper.length;indexProper++) { // Suportando apenas dois níveis no Json
+                    if(nameToFind == "") {
+                        var valueToPut = jsonObject[arrayProper[indexProper]]
+                    } else {
+                        var valueToPut = jsonObject[nameToFind][arrayProper[indexProper]]
+                    }
+                    if(valueToPut == true) {
+                        valueToPut = "Ativada"
+                    } else if (valueToPut == false) {
+                        valueToPut = "Desativada"
+                    }
+                    document.getElementById(nameToFind + arrayProper[indexProper] + "Result" + sufixToFind).innerText = valueToPut
+                }
+            }
+            
+            document.getElementById("resultConsult" + sufixToFind).hidden = false
+            if (Object.keys(jsonObject).includes("tasks") == false) {
+                return false;
+            }
+            document.getElementById("tasksBody" + sufixToFind).innerHTML = ""
+            for(var index=0;index < jsonObject["tasks"].length;index++) {
+                var taskData = jsonObject["tasks"][index]
+                if(taskData["completed"] == true) {
+                    taskData["completed"] = "Sim"
+                } else {
+                    taskData["completed"] = "Não"
+                }
+                document.getElementById("tasksBody" + sufixToFind).innerHTML += `
+                    <tr>
+                        <th scope="row">` + (index + 1) + `</th>
+                        <td>`+ taskData["name"] +`</td>
+                        <td>`+ taskData["weight"] +`</td>
+                        <td>`+ taskData["completed"] +`</td>
+                        <td>`+ taskData["createdAt"] +`</td>
+                    </tr>
+                `
+            }
+            document.getElementById("tasksTable" + sufixToFind).hidden = false
+            return true
+        }
+
+        function hiddenTasks(checkBox, pageChange) {
+            var page = allPages[pageChange]
+            var allTasks = page.getElementsByClassName("allTasks")[0];
+            if (checkBox.value == "yes") {
+                allTasks.hidden = false;
+            } else {
+                allTasks.hidden = true;
+            }
+            return false;
+        }
+
+        function addTask(buttonObject) {
+            key = $(buttonObject).closest("div.max-div-row")[0].id
+            pageChange = allPages[key]
+            pageName = pageChange.id
+            const taskCards = pageChange.getElementsByClassName("taskCard")
+            var numberTasks = taskCards.length ;
+            var divParent = pageChange.getElementsByClassName("allTasks")[0]; // Add news row of task to this div
+            var newTask = document.createElement("div"); // new row to add task
+            var lastestId = parseInt(taskCards[numberTasks - 1].id.split("_")[1], 10) // taskCard_10
+            newTask.className = "form-group taskCard taskCard_" + (lastestId + 1) + "_" + pageName
+            newTask.style = "width:100%"
+            newTask.id = "taskCard_" + (lastestId + 1) + "_" + pageName
+            var identf = "_" + (lastestId + 1)  + "_" + pageName;
+            var identfOrig = "_" + lastestId  + "_" + pageName;
+            var InnerChange = pageChange.getElementsByClassName("taskCard" + identfOrig)[0].innerHTML;
+            pageChange.getElementsByClassName("taskCard" + identfOrig)[0].getElementsByClassName("deleteTask")[0].hidden = false;
+            var replaceRegex = new RegExp(identfOrig, "g")
+            newTask.innerHTML = InnerChange.replace(replaceRegex, identf);
+            newTask.getElementsByClassName("card-title")[0].innerText = "Tarefa " + (numberTasks + 1)
+            divParent.appendChild(newTask);
+            
+            var olderAddButton = pageChange.getElementsByClassName("addNewTask");
+            olderAddButton[0].remove();
+            return false;
+        }
+        
+        function deleteTask(objectButtonDelete) {
+            key = $(objectButtonDelete).closest("div.max-div-row")[0].id
+            pageChange = allPages[key]
+            $(objectButtonDelete).closest("div.taskCard").remove();
+            updateTitle(pageChange);
+            return false;
+        }
+
+        function updateTitle(pageChange) {
+            const taskCards = pageChange.getElementsByClassName("taskCard");
+            for(var task = 0; task < taskCards.length; task++) {
+                taskCards[task].getElementsByClassName("card-title")[0].innerText = "Tarefa " + (task + 1);
+            }
+            return true
+        }
+
+        function cleanInputTasks(buttonClean, pageChange, alertReset) {
+            pageChange = allPages[pageChange]
+            var taskTemplate = `
+                {% include './tasks.html' %}
+            `
+            var allTasks = pageChange.getElementsByClassName("allTasks")[0]
+            allTasks.innerHTML = taskTemplate;
+            allTasks.hidden = true;
+            var allInputsInsertPage = pageChange.getElementsByTagName("input")
+            for(var index = 0;index < allInputsInsertPage.length;index++) {
+                var inputLocal = allInputsInsertPage[index]
+                if(inputLocal.type == "text") {
+                    inputLocal.value = ""
+                } else if (inputLocal.type == "radio") {
+                    if(inputLocal.defaultChecked) {
+                        inputLocal.checked = true
+                    }
+                }
+            }
+            resetAlert(alertReset);
+            buttonClean.hidden = true;
+
         }
 
     </script>

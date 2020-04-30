@@ -1,4 +1,4 @@
-<div class="row justify-content-center mt-4">
+<div class="row justify-content-center mt-4 max-div-row" id="insertPage">
     <div class="col-9 mb-3">
         <div class="row">
             <div class="col">
@@ -38,17 +38,17 @@
                     <div class="form-group row align-items-center">
                         <label for="tasksJob" id="tasksJob" class="col-sm-5 col-form-label">Há alguma tarefa ?</label>
                         <div class="custom-control custom-radio custom-control-inline" id="tasksJob">
-                            <input type="radio" id="yesHasTask" name="tasksJobOption" value="yes" class="custom-control-input" onchange="hiddenTasks(this); return false;">
+                            <input type="radio" id="yesHasTask" name="tasksJobOption" value="yes" class="custom-control-input" onchange="hiddenTasks(this, 'insertPage'); return false;">
                             <label class="custom-control-label" for="yesHasTask">Sim</label>
                         </div>
 
                         <div class="custom-control custom-radio custom-control-inline" id="tasksJob">
-                            <input type="radio" id="notHasTask" name="tasksJobOption" value="not" class="custom-control-input" onchange="hiddenTasks(this); return false;" checked>
+                            <input type="radio" id="notHasTask" name="tasksJobOption" value="not" class="custom-control-input" onchange="hiddenTasks(this, 'insertPage'); return false;" checked>
                             <label class="custom-control-label" for="notHasTask">Não</label>
                         </div>
                     </div>
                 
-                    <div class="form-group row align-items-center" id="allTasks" hidden>
+                    <div class="form-group row align-items-center allTasks" hidden>
                         {% include './tasks.html' %}
                     </div>
                     <div class="form-group row align-items-center">
@@ -65,60 +65,12 @@
         </div>
         <div class="row">
             <div class="col p-0">
-                <button class="btn btn-info btn-block" onclick="cleanInputTasks(this)" id="cleanButtonInput" hidden>Limpar campos!</button>
+                <button class="btn btn-info btn-block" onclick="cleanInputTasks(this, 'insertPage', 'responseInsert')" id="cleanButtonInput" hidden>Limpar campos!</button>
             </div>
         </div>
 
         
         <script type="text/javascript">
-            function hiddenTasks(checkBox) {
-                var allTasks = document.getElementById("allTasks");
-                if (checkBox.value == "yes") {
-                    allTasks.hidden = false;
-                } else {
-                    allTasks.hidden = true;
-                }
-                return false;
-            }
-            function addTask(buttonObject) {
-    
-                const taskCards = document.getElementsByClassName("taskCard")
-                var numberTasks = taskCards.length ;
-                var divParent = document.getElementById("allTasks"); // Add news row of task to this div
-                var newTask = document.createElement("div"); // new row to add task
-    
-                var lastestId = parseInt(taskCards[numberTasks - 1].id.split("_")[1], 10) // taskCard_10
-
-                newTask.className = "form-group taskCard"
-                newTask.style = "width:100%"
-                newTask.id = "taskCard_" + (lastestId + 1)
-                var identf = "_" + (lastestId + 1);
-                var identfOrig = "_" + lastestId;
-                var InnerChange = document.getElementById("taskCard" + identfOrig).innerHTML;
-                document.getElementById("taskCard" + identfOrig).getElementsByClassName("deleteTask")[0].hidden = false;
-                var replaceRegex = new RegExp(identfOrig, "g")
-                newTask.innerHTML = InnerChange.replace(replaceRegex, identf);
-                newTask.getElementsByClassName("card-title")[0].innerText = "Tarefa " + (numberTasks + 1)
-                divParent.appendChild(newTask);
-                
-                var olderAddButton = document.getElementsByClassName("addNewTask");
-                olderAddButton[0].remove();
-                return false;
-            }
-            
-            function deleteTask(object) {
-                $(object).closest("div.taskCard").remove();
-                updateTitle();
-                return false
-            }
-
-            function updateTitle() {
-                const taskCards = document.getElementsByClassName("taskCard");
-                for(var task = 0; task < taskCards.length; task++) {
-                    taskCards[task].getElementsByClassName("card-title")[0].innerText = "Tarefa " + (task + 1);
-                }
-                return true
-            }
 
             function sendInsert(formObject) {
                 resetAlert("responseInsert")
@@ -136,30 +88,6 @@
                 })
                 document.getElementById("cleanButtonInput").hidden = false
                 return false
-            }
-
-            function cleanInputTasks(buttonClean) {
-                var taskTemplate = `
-                    {% include './tasks.html' %}
-                `
-                var allTasks = document.getElementById("allTasks")
-                allTasks.innerHTML = taskTemplate;
-                allTasks.hidden = true;
-                var allInputs = document.getElementsByTagName("input")
-                for(var index = 0;index < allInputs.length;index++) {
-                    var inputLocal = allInputs[index]
-                    console.log(inputLocal)
-                    if(inputLocal.type == "text") {
-                        inputLocal.value = ""
-                    } else if (inputLocal.type == "radio") {
-                        if(inputLocal.defaultChecked) {
-                            inputLocal.checked = true
-                        }
-                    }
-                }
-                resetAlert("responseInsert");
-                buttonClean.hidden = true;
-
             }
            
 
