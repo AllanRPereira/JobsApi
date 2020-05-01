@@ -4,11 +4,11 @@
             <div class="col">
                 <form method="POST" onsubmit="sendInsert(this); return false;">
                     <div class="form-group row align-items-center">
-                        <label for="namejob" class="col-sm-5 col-form-label">Nome para o Job:</label>
-                        <input type="text" class="form-control col-sm-7 text-body" name="namejob" id="namejob" placeholder="Obrigatório">
+                        <label for="namejob" class="col-5 col-form-label">Nome para o Job:</label>
+                        <input type="text" class="form-control col-7 text-body" name="namejob" id="namejob" placeholder="Obrigatório">
                     </div>
                     <div class="form-group row align-items-center">
-                        <label class="col-form-label col-sm-5" for="jobstatus" id="jobstatus">O job está ativo ?</label>
+                        <label class="col-form-label col-5" for="jobstatus" id="jobstatus">O job está ativo ?</label>
                         <div class="custom-control custom-radio custom-control-inline" id="jobstatus">
                             <input type="radio" id="yesActiveJob" name="jobActiveOption" value="yes" class="custom-control-input">
                             <label class="custom-control-label" for="yesActiveJob">Sim</label>
@@ -20,11 +20,11 @@
                         </div>
                     </div>
                     <div class="form-group row align-items-center">
-                        <label for="parentJob" class="col-sm-5 col-form-label">Nome do Job a que depende:</label>
-                        <input type="text" class="form-control col-sm-7 text-body" name="parentJob" id="parentJob" placeholder="Deixe vazio para nenhum">
+                        <label for="parentJob" class="col-5 col-form-label">Nome do Job a que depende:</label>
+                        <input type="text" class="form-control col-7 text-body" name="parentJob" id="parentJob" placeholder="Deixe vazio para nenhum">
                     </div>
                     <div class="form-group row align-items-center">
-                        <label for="tasksJob" id="tasksJob" class="col-sm-5 col-form-label">A dependência está ativa ?</label>
+                        <label for="tasksJob" id="tasksJob" class="col-5 col-form-label">A dependência está ativa ?</label>
                         <div class="custom-control custom-radio custom-control-inline" id="tasksJob">
                             <input type="radio" id="activeParentJob" name="activeParent" value="yes" class="custom-control-input">
                             <label class="custom-control-label" for="activeParentJob">Sim</label>
@@ -36,7 +36,7 @@
                         </div>
                     </div>
                     <div class="form-group row align-items-center">
-                        <label for="tasksJob" id="tasksJob" class="col-sm-5 col-form-label">Há alguma tarefa ?</label>
+                        <label for="tasksJob" id="tasksJob" class="col-5 col-form-label">Há alguma tarefa ?</label>
                         <div class="custom-control custom-radio custom-control-inline" id="tasksJob">
                             <input type="radio" id="yesHasTask" name="tasksJobOption" value="yes" class="custom-control-input" onchange="hiddenTasks(this, 'insertPage'); return false;">
                             <label class="custom-control-label" for="yesHasTask">Sim</label>
@@ -74,6 +74,12 @@
 
             function sendInsert(formObject) {
                 resetAlert("responseInsert")
+                var consultAfterSend = checkAfterSend(formObject)
+                console.log(consultAfterSend)
+                if(consultAfterSend[0] == false) {
+                    return showAlert("alert alert-danger", "responseInsert", consultAfterSend[1])
+                }
+
                 getData(formObject, "insertHome").then((blob) => {
                     var reader = new FileReader();
                     reader.addEventListener("load", function() {

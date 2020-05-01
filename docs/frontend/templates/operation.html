@@ -113,7 +113,13 @@
                 body : jsonDataForm
             }
             return fetch("/" + operation, initContentFetch).then((result) => {
-                return result.blob();
+                return result.blob(); // Ambas tem que retornar um blob
+            }).catch((error) => {
+                var dictionaryError = {
+                    "status" : "unsuccess",
+                    "log" : error.message
+                }
+                return new Blob([JSON.stringify(dictionaryError)])
             })
         }
         
@@ -254,6 +260,17 @@
             resetAlert(alertReset);
             buttonClean.hidden = true;
 
+        }
+
+        function checkAfterSend(formObject) {
+            var formInformation = new FormData(formObject)
+            if(formInformation.get("namejob") == formInformation.get("parentJob")) { 
+                return [false, "O job parent não pode ter o mesmo nome do Job"]
+            } else if (formInformation.get("namejob") == "") {
+                return [false, "O nome do Job não pode ser nulo"]
+            } else {
+                return [true, ""]
+            }
         }
 
     </script>

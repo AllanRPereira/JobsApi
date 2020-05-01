@@ -8,7 +8,19 @@ secret_key = "7a537406a8200f8e3f457cca721b04bc0a7197b3bb8447a80fb9bb3e8ae64356"
 databaseConn = DatabaseConnection()
 
 "Alias to use backend Jobs class"
-createJob = Jobs
+def createJob(jobInformationDictionary):
+    try:
+        jobInstance = Jobs(**jobInformationDictionary)
+    except Exception as error:
+        logs = {
+            "status" : "unsuccess",
+            "log" : error.args[0]
+        }
+        if error.args[0] == "ParentJob can't have same name of the principal job":
+            return (False, logs, 417)
+        else:
+            return (False, logs, 500)
+    return (True, jobInstance)
 
 "User of the system"
 roles = {

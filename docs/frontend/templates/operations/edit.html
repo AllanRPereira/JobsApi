@@ -144,7 +144,12 @@
             var extraParameter = undefined;
             if (mode === "consultMode") {
                 var extraParameter = {"consultToEdit" : ''}
+                actualJobData = "" // A cada pesquisa de consulta para edição o nome do job atual é zerado
             } else {
+                var consultAfterSend = checkAfterSend(formObject)
+                if(consultAfterSend[0] == false) {
+                    return showAlert("alert alert-danger", "responseJobEdit", consultAfterSend[1])
+                }
                 var extraParameter = {"job_name_edit" : actualJobData}
             }
             getData(formObject, "editHome", extraParameter).then((blob) => {
@@ -154,7 +159,12 @@
                     if (jsonObject["status"] == "unsuccess") {
                         return showAlert("alert alert-danger", "responseJobEdit", jsonObject["log"])
                     } else if (jsonObject["status"] == "success" && mode != "consultMode") {
-                        return showAlert("alert alert-success", "responseJobEdit", "Funcionando!")
+                        allHiddens({
+                            "editJobData" : "editDataForm",
+                            "actualData" : "dataTables"
+                        }) // Esconder os campos de edição e de consulta
+                        return showAlert("alert alert-success", "responseJobEdit", "Job editado com sucesso!")
+                        
                     } else {
                         insertObjectsDataInScreen(jsonObject, "Edit")
                         data = new FormData(formObject)

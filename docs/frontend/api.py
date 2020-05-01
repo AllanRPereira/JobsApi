@@ -10,33 +10,40 @@ import time
 
 api = Blueprint("api", __name__, url_prefix="/api")
 
-@api.route("/")
+@api.route("/", methods=['GET', 'POST'])
 def apiIndex():
     return Response("{\"status\" : \"please see the documentation\"}", status=200, mimetype="application/json")
 
 @api.route("/getoken", methods=['GET', 'POST'])
 def getToken():
-    jsonValues = request.get_json()
-    username = jsonValues['username']
-    password = jsonValues['password']
+    jsonValues = request.args if request.method == "GET" else request.get_json()
+    try:
+        username = jsonValues['username']
+        password = jsonValues['password']
+    except Exception as error:
+        return (jsonify(**{"status" : "error", "error" : f"{error.args[0]}"}), 412)
 
     for typeUser in roles.keys():
         if username in roles[typeUser][0].keys():
             if roles[typeUser][0][username] == password:
-                return returnToken(roles[typeUser][1])
+                return (jsonify({"status" : "success", "token" : returnToken(roles[typeUser][1])}), 200)
             else:
                 break
     
-    return Response("{\"status\" : \"User or password are incorrect\"}", status=200, mimetype="application/json")
+    return (jsonify(**{"status":"unsuccess", "log" : "User or password are incorrect"}), 200)
 
 
 @api.route("/insert", methods=['GET', 'POST'])
 @accessLevelToken(function="insert")
 def insertAPI():
     receivedJob = checkFromHome()
-    if receivedJob == None or "name" not in receivedJob.keys():
-        return Response("{\"status\" : \"unsuccess\"}", status=412, mimetype="application/json")
-    jobInstance = createJob(**receivedJob)
+    checkName = checkCommonRequirements(receivedJob)
+    if checkName[0]: return checkName[1]
+    createdJobReturn = createJob(receivedJob)
+    if createdJobReturn[0]:
+        jobInstance = createdJobReturn[1]
+    else:
+        return (jsonify(**createdJobReturn[1]), createdJobReturn[2])
     statusCode, content = databaseConn.insert(jobInstance)
     if statusCode:
         content = {
@@ -54,12 +61,17 @@ def insertAPI():
 @accessLevelToken("edit")
 def editAPI():
     receivedJob = checkFromHome()
-    if receivedJob == None or "name" not in receivedJob:
-        return Response("{\"status\" : \"unsuccess\"}", status=412, mimetype="application/json")
+    checkName = checkCommonRequirements(receivedJob)
+    if checkName[0]: return checkName[1]
 
     jobName = receivedJob["job_name_edit"]
     receivedJob.pop("job_name_edit")
-    jobInstance = createJob(**receivedJob)
+    createdJobReturn = createJob(receivedJob)
+    if createdJobReturn[0]:
+        jobInstance = createdJobReturn[1]
+    else:
+        return (jsonify(**createdJobReturn[1]), createdJobReturn[2])
+
     statusCode, response = databaseConn.edition(jobInstance, jobName=jobName)
     if statusCode:
         return Response("{\"status\" : \"success\"}", status=200, mimetype="application/json")
@@ -74,8 +86,9 @@ def editAPI():
 @accessLevelToken("delete")
 def deleteAPI():
     receivedJob = checkFromHome()
+    checkName = checkCommonRequirements(receivedJob)
+    if checkName[0]: return checkName[1]
     jobName = receivedJob["name"]
-    
     statusOperation, content = databaseConn.exclusion(jobName=jobName)
 
     if statusOperation:
@@ -87,8 +100,8 @@ def deleteAPI():
 @accessLevelToken("consult")
 def consultAPI():
     receivedJob = checkFromHome()
-    if receivedJob == None or "name" not in receivedJob:
-        return Response("{\"status\" : \"unsuccess\"}", status=412, mimetype="application/json")
+    checkName = checkCommonRequirements(receivedJob)
+    if checkName[0]: return checkName[1]
     jobName = receivedJob["name"]
     
     statusOperation, content = databaseConn.consult(jobName=jobName)
@@ -144,8 +157,24 @@ def parseFormToJob(formRequestJson):
     return jobValues
 
 def checkFromHome():
-    jsonObject = request.get_json()
+    if request.method == "POST":
+        jsonObject = request.get_json()
+    else:
+        jsonObject = request.args
     if "namejob" in jsonObject:
         return parseFormToJob(jsonObject)
     else:
         return jsonObject
+
+def checkCommonRequirements(receivedJob):
+    """
+    All job need the attributes name
+    """
+    if receivedJob == None:
+        return (True, (jsonify(**{"status":"unsuccess", "log" : "Job data don't passed"}), 200))
+    elif "name" not in receivedJob.keys():
+        return (True, (jsonify(**{"status":"unsuccess", "log" : "Job-name don't passed"}), 200))
+    elif receivedJob["name"] == "":
+        return (True, (jsonify(**{"status":"unsuccess", "log" : "Job-name can't null"}), 200))
+    else:
+        return (False, "")

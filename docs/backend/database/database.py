@@ -41,7 +41,7 @@ class DatabaseConnection:
         parentJob = attributesJob['parentJob']
         selectCondition = self.jobTable.c.parentJob
         whereCondition = self.jobTable.c.name == parentJob['name']
-        selectParentJob = alchemy.select([selectCondition])
+        selectParentJob = alchemy.select([selectCondition]).where(whereCondition)
         results = self.connection.execute(selectParentJob).fetchone()
         if results:
             if nameJob == results[0].split("&")[0]:
