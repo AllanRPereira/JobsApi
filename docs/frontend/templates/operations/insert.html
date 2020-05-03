@@ -1,5 +1,5 @@
 <div class="row justify-content-center mt-4 max-div-row" id="insertPage">
-    <div class="col-9 mb-3">
+    <div class="col-sm-9 mb-3 pl-4 pr-4">
         <div class="row">
             <div class="col">
                 <form method="POST" onsubmit="sendInsert(this); return false;">
@@ -75,7 +75,6 @@
             function sendInsert(formObject) {
                 resetAlert("responseInsert")
                 var consultAfterSend = checkAfterSend(formObject)
-                console.log(consultAfterSend)
                 if(consultAfterSend[0] == false) {
                     return showAlert("alert alert-danger", "responseInsert", consultAfterSend[1])
                 }

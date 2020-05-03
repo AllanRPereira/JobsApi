@@ -92,9 +92,9 @@ def deleteAPI():
     statusOperation, content = databaseConn.exclusion(jobName=jobName)
 
     if statusOperation:
-        return Response("{\"status\" : \"success\"}", status=200, mimetype="application/json")
+        return (jsonify(**{"status" : "success"}), 200)
     else:
-        return Response("{\"status\" : \"unsuccess\"}", status=400, mimetype="application/json")
+        return (jsonify(**{"status" : "unsuccess", "log" : content}), 400)
 
 @api.route("/consult", methods=['GET', 'POST'])
 @accessLevelToken("consult")
@@ -157,10 +157,10 @@ def parseFormToJob(formRequestJson):
     return jobValues
 
 def checkFromHome():
-    if request.method == "POST":
-        jsonObject = request.get_json()
+    if request.method == "POST" or request.mimetype == "application/json":
+        jsonObject = request.get_json().copy()
     else:
-        jsonObject = request.args
+        jsonObject = request.args.copy()
     if "namejob" in jsonObject:
         return parseFormToJob(jsonObject)
     else:

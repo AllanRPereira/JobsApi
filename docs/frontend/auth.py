@@ -16,7 +16,7 @@ def accessLevelToken(function):
     def decoratorFunctionPrincipal(view):
         @functools.wraps(view)
         def decoratorLevelToken(*args, **kwargs):
-            if request.method == "POST":
+            if request.method == "POST" or request.mimetype == "application/json":
                 jsonObject = request.get_json()
             else:
                 jsonObject = request.args

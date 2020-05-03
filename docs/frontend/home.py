@@ -1,4 +1,5 @@
 from flask import Flask, render_template, url_for, request, session, redirect
+from werkzeug.exceptions import HTTPException
 from docs.frontend.auth import checkIfUserInSession
 from docs.frontend import roles
 import docs.frontend.api as apiFunctions
@@ -76,6 +77,9 @@ def editHome():
     else:
         return apiFunctions.editAPI()
 
+@frontEnd.errorhandler(HTTPException)
+def anyerrorinhome(error):
+    return redirect(url_for("index"))
 
 if __name__ == "__main__":
     frontEnd.run(host="127.0.0.1", debug=True, port=5000)

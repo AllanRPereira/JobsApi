@@ -1,27 +1,25 @@
 <!DOCTYPE html>
-<head lang="pt-br">
-    <title>Jobs Registrer</title>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="author" content="AllanRPereira">
-    <meta name="description" content="Desenvolvimento de api simples para estudos">
-    <meta name="keywords" content="estudo, api, banco de dados">
-    <link href="{{url_for("static", filename="bootstrap.min.css")}}" rel="stylesheet">
+<html lang="pt-br">
+<head>
+    {% include "header.html" %}
     <script type="text/javascript">
         const yourToken = "{{ tokenAccess }}";
     </script>
 </head>
 <body>
-    <div class="container-md">
+    <div class="container">
         <div class="row justify-content-center mt-4">
-            <div class="col-md-8">
+            <div class="col-8 text-center">
                 <h3>
-                    Job Registrer - Sistema de registro de trabalhos e tarefas
+                    Job Registrer
                 </h3>
+                <h4>
+                    Sistema de registro de trabalhos e tarefas
+                </h4>
             </div>
         </div>
         <div class="row justify-content-center mt-3">
-            <div class="col-md-8">
+            <div class="col-md-9">
                 <ul class="nav nav-tabs justify-content-center" id="tabOperations" role="tablist">
                     {% set checkTabs = namespace(first=true) %}
                     {% set aliasName = {
@@ -49,6 +47,9 @@
                             </li>
                         {% endif %}
                     {% endfor %}
+                    <li class="nav-item">
+                        <a class="nav-link text-secondary" href="/logout" aria-selected="true">Sair da conta</a>
+                    </li>
                 </ul>
                 <div class="tab-content" id="tabContentOperations">
                     {% set check = namespace(first=true) %}
@@ -103,7 +104,6 @@
                 }
             }
             var jsonDataForm = JSON.stringify(object);
-            console.log(jsonDataForm)
             var initContentFetch = {
                 headers : {
                     "Content-Type" : "application/json"
@@ -207,7 +207,7 @@
             var lastestId = parseInt(taskCards[numberTasks - 1].id.split("_")[1], 10) // taskCard_10
             newTask.className = "form-group taskCard taskCard_" + (lastestId + 1) + "_" + pageName
             newTask.style = "width:100%"
-            newTask.id = "taskCard_" + (lastestId + 1) + "_" + pageName
+            newTask.id = "taskCard_" + (lastestId + 1) + "_" + pageName // Adicionar um Se aqui
             var identf = "_" + (lastestId + 1)  + "_" + pageName;
             var identfOrig = "_" + lastestId  + "_" + pageName;
             var InnerChange = pageChange.getElementsByClassName("taskCard" + identfOrig)[0].innerHTML;
@@ -274,8 +274,13 @@
         }
 
     </script>
-
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <!-- Para arquivos offline
     <script src="{{url_for("static", filename="jquery-3.4.1.slim.min.js")}}" ></script>
     <script src="{{url_for("static", filename="popper.min.js")}}"></script>
     <script src="{{url_for("static", filename="bootstrap.min.js")}}"></script>
+    -->
 </body>
+</html>

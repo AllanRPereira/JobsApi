@@ -1,50 +1,56 @@
 <!DOCTYPE html>
 <html lang="pt-br" class="h-100">
     <head>
-        <title>Jobs Registrer</title>
-        <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="author" content="AllanRPereira">
-        <meta name="description" content="Desenvolvimento de api simples para estudos">
-        <meta name="keywords" content="estudo, api, banco de dados">
-        <link href="{{url_for("static", filename="bootstrap.min.css")}}" rel="stylesheet">
+    {% include 'header.html' %}
     </head>
     <body class="h-100">
-        <div class="h-100 container-md">
+        <div class="container h-100" style="max-width:650px">
             <div class="row h-100 justify-content-center align-items-center">
-                <div class="col-md-4">
-                    <!--<div class="card border border-warning" style="background-color:rgba(255,255,255,1)">-->
-                    <div class="card-body m-3">
-                        <div class="row">
-                            <form method="POST" action="/login">
-                                <div class="form-group row">
-                                    <label for="username" class="col-5 col-form-label">Usuário:</label>
-                                    <input type="text" class="form-control col-7 text-body" name="username" id="username">
-                                </div>
-                                <div class="form-group row">
-                                    <label for="password" class="col-5 col-form-label">Senha:</label>
-                                    <input type="password" class="form-control col-7 text-body" name="password" id="password">
-                                </div>
-                                <div class="form-group row">
-                                    <button type="submit" class="btn btn-outline-primary btn-block z-depth-5">Fazer login</button>
-                                </div>
-                                <div class="form-group row">
-                                    {% if alert%}
-                                        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="width:100%">
-                                            {{ contentAlert }}
-                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                    {% else %}
-                                        <div></div>
-                                    {% endif %}
-                                </div>
-                            <form>
+                <div class="col-sm-8">
+                    <div class="card border rounded p-2 pt-4">
+                        <div class="card-title text-center mt-3">
+                            <h3>Job registrer</h5>
+                            <h5>Seu sistema de gestão de tarefas</h5>
                         </div>
+                        <div class="card-body m-3">
+                            <div class="row justify-content-center">
+                                <form method="POST" action="/login">
+                                    <div class="form-group row">
+                                        <label for="username" class="col-5 col-form-label">Usuário:</label>
+                                        <input type="text" class="form-control col-7 text-body" name="username" id="username">
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="password" class="col-5 col-form-label">Senha:</label>
+                                        <input type="password" class="form-control col-7 text-body" name="password" id="password">
+                                    </div>
+                                    <div class="form-group row">
+                                        <button type="submit" class="btn btn-outline-primary btn-block z-depth-5">Fazer login</button>
+                                    </div>
+                                    <div class="form-group row">
+                                        {% if alert%}
+                                            <div class="alert alert-danger alert-dismissible fade show" role="alert" style="width:100%">
+                                                {{ contentAlert }}
+                                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                        {% else %}
+                                            <div></div>
+                                        {% endif %}
+                                    </div>
+                                <form>
+                            </div>
+                        </div>
+                    </div>
                 </div> 
             </div>
         </div>
         <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+        <!-- Para arquivos Offline
+        <script src="{{url_for("static", filename="jquery-3.4.1.slim.min.js")}}" ></script>
+        <script src="{{url_for("static", filename="popper.min.js")}}"></script>
+        <script src="{{url_for("static", filename="bootstrap.min.js")}}"></script>-->
     </body>
 </html>

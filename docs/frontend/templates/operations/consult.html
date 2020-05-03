@@ -19,42 +19,42 @@
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col">
-                <div id="resultConsult" hidden>
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Resultados da Consulta</h5>
-                            <div class="form-inline">
-                                <label for="nameResult">Nome do Job:</label>
-                                <span id="nameResult" class="ml-2"></span>
-                            </div>
-                            <div class="form-inline">
-                                <label for="activeResult">Estado: </label>
-                                <span id="activeResult" class="ml-2"></span>
-                            </div>
-                            <div class="form-inline align-items-center">
-                                <label for="parentJobnameResult">Job dependente: </label>
-                                <span id="parentJobnameResult" class="ml-2"></span>
-                                <label for="parentJobactiveResult" class="ml-3">Estado: </label>
-                                <span id="parentJobactiveResult" class="ml-2"></span>
-                            </div>
-                            <h5 class="text-center mt-2 mb-3">Lista de Tarefas</h5>
-                            <table class="table" id="tasksTable" hidden>
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Nº</th>
-                                        <th scope="col">Nome</th>
-                                        <th scope="col">Peso</th>
-                                        <th scope="col">Completada</th>
-                                        <th scope="col">Criada em</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tasksBody">
-                                </tbody>
-                            </table>
-                        </div>
+    </div>
+    <div class="col-sm-9">
+        <div class="row border rounded pt-4" id="resultConsult" style="" hidden>
+            <div class="col-12">
+                <div class="col-12">
+                    <h5 class="card-title text-center">Resultados da Consulta</h5>
+                    <div class="form-inline">
+                        <label for="nameResult">Nome do Job:</label>
+                        <span id="nameResult" class="ml-2"></span>
                     </div>
+                    <div class="form-inline">
+                        <label for="activeResult">Estado: </label>
+                        <span id="activeResult" class="ml-2"></span>
+                    </div>
+                    <div class="form-inline align-items-center">
+                        <label for="parentJobnameResult">Job dependente: </label>
+                        <span id="parentJobnameResult" class="ml-2"></span>
+                        <label for="parentJobactiveResult" class="ml-3">Estado: </label>
+                        <span id="parentJobactiveResult" class="ml-2"></span>
+                    </div>
+                </div>
+                <div class="col-12 mt-3">
+                    <h5 class="text-center mt-2 mb-3">Lista de Tarefas</h5>
+                    <table class="table" id="tasksTable" hidden>
+                        <thead>
+                            <tr>
+                                <th scope="col">Nº</th>
+                                <th scope="col">Nome</th>
+                                <th scope="col">Peso</th>
+                                <th scope="col">Completada</th>
+                                <th scope="col">Criada em</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tasksBody">
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

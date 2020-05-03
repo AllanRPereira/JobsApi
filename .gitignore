@@ -1,7 +1,11 @@
 virtenv/
+docs/backend/__pycache__/
+docs/frontend/__pycache__/
 docs/__pycache__/
 __pycache__
 .*
 !.gitignore
 /test*.py
-docs/frontend/static/*
+docs/frontend/static/*.js
+docs/frontend/static/*.css
+!docs/frontend/static/Roboto.ttf
