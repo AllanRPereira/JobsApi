@@ -197,9 +197,9 @@
         }
 
         function addTask(buttonObject) {
-            key = $(buttonObject).closest("div.max-div-row")[0].id
-            pageChange = allPages[key]
-            pageName = pageChange.id
+            var key = $(buttonObject).closest("div.max-div-row")[0].id
+            var pageChange = allPages[key]
+            var pageName = pageChange.id
             const taskCards = pageChange.getElementsByClassName("taskCard")
             var numberTasks = taskCards.length ;
             var divParent = pageChange.getElementsByClassName("allTasks")[0]; // Add news row of task to this div
@@ -238,15 +238,24 @@
             return true
         }
 
-        function cleanInputTasks(buttonClean, pageChange, alertReset) {
-            pageChange = allPages[pageChange]
+        function cleanInputTasks(buttonClean, ocultButton, pageChange, alertReset) {
+            var pageChangeClass = allPages[pageChange]
+            const newId = "taskCard_1_" + pageChange
             var taskTemplate = `
                 {% include './tasks.html' %}
             `
-            var allTasks = pageChange.getElementsByClassName("allTasks")[0]
+            var allTasks = pageChangeClass.getElementsByClassName("allTasks")[0]
             allTasks.innerHTML = taskTemplate;
             allTasks.hidden = true;
-            var allInputsInsertPage = pageChange.getElementsByTagName("input")
+            var taskCardObject = allTasks.getElementsByClassName("taskCard_1")[0]
+            taskCardObject.className = "form-group taskCard taskCard_1_" + pageChange
+            taskCardObject.id = "taskCard_1_" + pageChange
+
+            var regexToChangeId = new RegExp("_1", "g");
+            var idToChange = "_1_" + pageChange;
+            taskCardObject.innerHTML = taskCardObject.innerHTML.replace(regexToChangeId, idToChange)
+
+            var allInputsInsertPage = pageChangeClass.getElementsByTagName("input")
             for(var index = 0;index < allInputsInsertPage.length;index++) {
                 var inputLocal = allInputsInsertPage[index]
                 if(inputLocal.type == "text") {
@@ -258,7 +267,9 @@
                 }
             }
             resetAlert(alertReset);
-            buttonClean.hidden = true;
+            if(ocultButton === "ocult") {
+                buttonClean.hidden = true;
+            }
 
         }
 
@@ -274,13 +285,6 @@
         }
 
     </script>
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-    <!-- Para arquivos offline
-    <script src="{{url_for("static", filename="jquery-3.4.1.slim.min.js")}}" ></script>
-    <script src="{{url_for("static", filename="popper.min.js")}}"></script>
-    <script src="{{url_for("static", filename="bootstrap.min.js")}}"></script>
-    -->
+    {% include 'imports.html' %}
 </body>
 </html>

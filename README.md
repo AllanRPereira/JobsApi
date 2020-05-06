@@ -60,8 +60,7 @@ Se tudo ocorrer bem você não verá nenhum sinal vermelho e todos os testes ir�
 
 #### Detalhe importante:
 Os arquivos referentes ao Jquery, *do bootstrap*, e ao próprio *bootstrap.min.css* serão anexados num zip na pasta **docs/frontend/static** para caso queira utilizar as depedências de forma offline. Sendo além disso necessário remover os comentários que deixei nos arquivos que abrem as dependências offline:
-- **docs/frontend/templates/login.html**
-- **docs/frontend/templates/operation.html**
+- **docs/frontend/templates/imports.html**
 - **docs/frontend/templates/header.html**
 
 ## O que ainda pode ser melhorado

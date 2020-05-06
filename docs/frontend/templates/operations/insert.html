@@ -65,7 +65,7 @@
         </div>
         <div class="row">
             <div class="col p-0">
-                <button class="btn btn-info btn-block" onclick="cleanInputTasks(this, 'insertPage', 'responseInsert')" id="cleanButtonInput" hidden>Limpar campos!</button>
+                <button class="btn btn-info btn-block" onclick="cleanInputTasks(this, 'not-ocult', 'insertPage', 'responseInsert')" id="cleanButtonInputInsert" hidden>Limpar campos!</button>
             </div>
         </div>
 
@@ -83,6 +83,7 @@
                     var reader = new FileReader();
                     reader.addEventListener("load", function() {
                         var jsonObject = JSON.parse(reader.result)
+                        cleanInputTasks(document.getElementById("cleanButtonInputInsert"), 'ocult', 'insertPage', 'responseInsert')
                         if (jsonObject["status"] == "unsuccess") {
                             return showAlert("alert alert-danger", "responseInsert", jsonObject["log"])
                         } else {
@@ -91,7 +92,6 @@
                     })
                     reader.readAsText(blob)
                 })
-                document.getElementById("cleanButtonInput").hidden = false
                 return false
             }
            
